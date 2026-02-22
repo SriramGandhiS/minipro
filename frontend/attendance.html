@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Smart Attendance | Take Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-page="attendance">
+    <div id="three-bg"></div>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <header class="site-header">
+        <div class="logo">SmartAttendance</div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="register.html">Registration</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="attendance.html" class="active">Attendance</a>
+            <a href="profile.html">Student Profile</a>
+            <a href="#" onclick="logout(); return false;">Logout</a>
+        </nav>
+    </header>
+
+    <main style="width: min(900px, 95%); margin: 40px auto; padding: 0 16px;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 4px;">📷 Take Attendance</h2>
+                <p style="color: var(--muted); font-size: 0.9rem;">AI Face Recognition — marks students automatically
+                    every 3 seconds.</p>
+            </div>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="hero" style="margin: 0; gap: 20px; align-items: flex-start;">
+
+            <!-- Left: Camera -->
+            <div class="hero-media">
+                <div class="camera-card">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas" style="display:none;"></canvas>
+                </div>
+
+                <!-- Controls -->
+                <div class="card" style="margin-top: 14px; padding: 18px;">
+                    <div class="card-actions" style="justify-content: center; flex-wrap: wrap; gap: 10px;">
+                        <button class="btn primary" onclick="startAttendance()"
+                            style="flex: 1; min-width: 130px; text-align: center;">
+                            ▶ Start Scanning
+                        </button>
+                        <button class="btn" onclick="stopAttendance()"
+                            style="flex: 1; min-width: 130px; text-align: center;">
+                            ■ Stop
+                        </button>
+                    </div>
+                    <div style="text-align: center; margin-top: 14px;">
+                        <span id="scan-state" class="pill">Stopped</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Status & Info -->
+            <div class="hero-inner" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="card compact" style="padding: 20px;">
+                    <h3 style="color: var(--accent); margin-bottom: 8px; font-size: 1rem;">How it works</h3>
+                    <ul style="color: var(--muted); font-size: 0.88rem; line-height: 1.8; padding-left: 18px;">
+                        <li>Camera will start when you click <strong style="color:#fff;">▶ Start Scanning</strong></li>
+                        <li>Faces are recognized every <strong style="color:#fff;">3 seconds</strong> automatically</li>
+                        <li>Attendance is marked in real-time to the database</li>
+                        <li>Click <strong style="color:#fff;">■ Stop</strong> when the class ends</li>
+                        <li>View results on the <a href="dashboard.html" style="color: var(--accent);">Dashboard</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Live recognition output -->
+                <div class="card compact" style="padding: 20px;">
+                    <h3 style="color: var(--accent); margin-bottom: 10px; font-size: 1rem;">Recognition Log</h3>
+                    <pre id="output" class="output"
+                        style="min-height: 160px; max-height: 300px; overflow-y: auto; font-size: 0.82rem;">Ready. Press Start to begin.</pre>
+                </div>
+
+                <!-- Quick links -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="dashboard.html" class="btn" style="flex: 1; text-align: center; text-decoration: none;">📊
+                        View Dashboard</a>
+                    <a href="register.html" class="btn" style="flex: 1; text-align: center; text-decoration: none;">➕
+                        Register Student</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 Smart Attendance | PSNACET</span>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

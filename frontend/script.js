@@ -8,12 +8,14 @@ if (window.location.hostname !== 'localhost' && window.location.hostname !== '12
   API_BASE = window.location.protocol + "//" + window.location.host;
 }
 
-// Global JWT Token state
+// Global JWT Token state - restored from session on load
 let jwtToken = sessionStorage.getItem("jwtToken") || null;
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const output = document.getElementById("output");
-const scanState = document.getElementById("scan-state");
+
+// These are initialized in initPage once the DOM is ready
+let video = null;
+let canvas = null;
+let output = null;
+let scanState = null;
 
 let attendanceInterval = null;
 let dashboardInterval = null;
@@ -546,6 +548,13 @@ function init3DBackground() {
   const container = document.getElementById("three-bg");
   if (!container || !window.THREE) return;
 
+  // WebGL check - prevents hanging on devices without GPU support
+  try {
+    const testCanvas = document.createElement('canvas');
+    const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+    if (!gl) { console.warn('WebGL not supported. Skipping 3D background.'); return; }
+  } catch (e) { return; }
+
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x051016, 0.0011);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
@@ -793,8 +802,8 @@ async function handleGoogleLogin(response) {
 
 function checkAuthProtection() {
   const page = document.body.dataset.page;
-  // Allow home, register (for face reg), and admin login to bypass redirect
-  if (!jwtToken && page !== "home" && page !== "login" && page !== "admin") {
+  // Allow home, register, admin, and the new attendance page to bypass auth redirect
+  if (!jwtToken && page !== "home" && page !== "login" && page !== "admin" && page !== "attendance") {
     console.warn("Unauthorized access attempt. Redirecting to home.");
     window.location.href = "index.html";
   }
@@ -805,6 +814,12 @@ document.addEventListener("DOMContentLoaded", initPage);
 
 function initPage() {
   try {
+    // Initialize DOM references now that the DOM is ready
+    video = document.getElementById("video");
+    canvas = document.getElementById("canvas");
+    output = document.getElementById("output");
+    scanState = document.getElementById("scan-state");
+
     init3DBackground();
     if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
 
@@ -812,9 +827,14 @@ function initPage() {
 
     const page = document.body.dataset.page;
     if (page === "dashboard") {
-      loadMonths().then(() => loadReport(getSelectedMonth()));
-      dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
-      setTimeout(fetchAnalytics, 1000);
+      // Dashboard: ONLY load reports and analytics. Camera is on attendance.html.
+      loadMonths().then(() => loadReport(getSelectedMonth())).catch(console.warn);
+      if (jwtToken) {
+        dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 10000);
+        setTimeout(fetchAnalytics, 1500);
+      }
+    } else if (page === "attendance") {
+      // Dedicated attendance page - start camera here
       startCamera();
     } else if (page === "register") {
       startCamera();
@@ -825,7 +845,7 @@ function initPage() {
       }
     }
   } catch (err) {
-    console.error("Critical Page Init Failure:", err);
+    console.error("Page Init Error:", err);
   }
 }
 
