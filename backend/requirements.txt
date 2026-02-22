@@ -5,3 +5,4 @@ numpy
 gunicorn
 PyJWT
 Pillow
+werkzeug

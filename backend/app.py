@@ -35,6 +35,10 @@ def token_required(f):
 def index():
     return app.send_static_file("index.html")
 
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
 DATA_PATH = "data"
 ENCODING_FILE = "data/encodings.pkl"
 DB_FILE = "attendance.db"
