@@ -845,8 +845,220 @@
       .footer-top {
         flex-direction: column;
       }
-    }
+
+      /* ─── LOGIN MODAL ─── */
+      #login-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1200px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      #login-modal-overlay.active {
+        opacity: 1;
+      }
+
+      .login-card-back2,
+      .login-card-back1 {
+        position: absolute;
+        width: 420px;
+        border-radius: 20px;
+        background: #1c1c22;
+        transform-origin: bottom center;
+      }
+
+      .login-card-back2 {
+        height: 300px;
+        bottom: calc(50% - 190px);
+        transform: translateY(28px) scale(0.88) rotateX(4deg);
+        opacity: 0.45;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+      }
+
+      .login-card-back1 {
+        height: 340px;
+        bottom: calc(50% - 215px);
+        transform: translateY(14px) scale(0.94) rotateX(2deg);
+        opacity: 0.65;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .login-modal-card {
+        position: relative;
+        width: 420px;
+        background: #1e1e26;
+        border-radius: 20px;
+        padding: 40px 36px 32px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+        color: #fff;
+        transform: translateY(24px);
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      #login-modal-overlay.active .login-modal-card {
+        transform: translateY(0);
+      }
+
+      .lm-close {
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        background: rgba(255, 255, 255, 0.07);
+        border: none;
+        color: #888;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+      }
+
+      .lm-close:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+      }
+
+      .lm-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .lm-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: #cbff4d;
+        color: #0f0f14;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        box-shadow: 0 0 24px rgba(203, 255, 77, 0.35);
+      }
+
+      .lm-brand-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.02em;
+      }
+
+      .lm-brand-sub {
+        font-size: 0.65rem;
+        color: #666;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .lm-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        text-align: center;
+        color: #fff;
+        letter-spacing: -0.03em;
+        margin-bottom: 8px;
+      }
+
+      .lm-sub {
+        font-size: 0.8rem;
+        color: #777;
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 28px;
+      }
+
+      .lm-g-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+
+      .lm-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #333;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 14px 0;
+      }
+
+      .lm-divider::before,
+      .lm-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .lm-admin-btn {
+        width: 100%;
+        padding: 13px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #aaa;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font);
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+      }
+
+      .lm-admin-btn:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        color: #fff;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .lm-watermark {
+        text-align: center;
+        margin-top: 22px;
+        font-size: 0.65rem;
+        color: #333;
+        letter-spacing: 0.04em;
+        transform: perspective(300px) rotateX(12deg) translateZ(-4px);
+        transform-origin: bottom center;
+        transition: transform 0.3s, color 0.3s;
+      }
+
+      .lm-watermark:hover {
+        transform: perspective(300px) rotateX(0deg) translateZ(0);
+        color: #555;
+      }
+
+      .lm-watermark strong {
+        color: #cbff4d;
+        font-weight: 700;
+      }
+
+      @media (max-width: 480px) {
+
+        .login-modal-card,
+        .login-card-back1,
+        .login-card-back2 {
+          width: 92vw;
+        }
+      }
   </style>
+
 </head>
 
 <body data-page="home">
@@ -860,10 +1072,10 @@
         <li><a href="#features">System</a></li>
         <li><a href="#achievements">Achievements</a></li>
         <li><a href="#placements">Placements</a></li>
-        <li><a href="#auth">Login</a></li>
+        <li><a href="javascript:void(0)" onclick="openLoginModal()">Login</a></li>
       </ul>
     </nav>
-    <a href="#auth" class="nav-btn">Login</a>
+    <button onclick="openLoginModal()" class="nav-btn" style="cursor:pointer;border:none;">Login</button>
   </header>
 
   <!-- ─── HERO ─── -->
@@ -1123,6 +1335,46 @@
     </div>
   </div>
 
+  <!-- ─── LOGIN MODAL ─── -->
+  <div id="login-modal-overlay" style="display:none;" onclick="if(event.target===this)closeLoginModal()">
+    <!-- Stacked background cards -->
+    <div class="login-card-back2"></div>
+    <div class="login-card-back1"></div>
+    <!-- Main card -->
+    <div class="login-modal-card" id="login-modal-card">
+      <!-- Brand mark -->
+      <div class="lm-brand">
+        <div class="lm-icon">SA</div>
+        <div class="lm-brand-name">SmartAttendance</div>
+        <div class="lm-brand-sub">PSNACET · AI-powered System</div>
+      </div>
+
+      <h2 class="lm-title">Welcome Back</h2>
+      <p class="lm-sub">Sign in with your official PSNACET institutional account to access the attendance system.</p>
+
+      <!-- Google Sign-in -->
+      <div id="g_id_onload" data-client_id="306791224176-emtle6k75ce3uk0m5o08ia0hcdihlovl.apps.googleusercontent.com"
+        data-context="signin" data-ux_mode="popup" data-callback="handleGoogleLogin" data-auto_prompt="false">
+      </div>
+      <div class="lm-g-wrap">
+        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_black"
+          data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="320">
+        </div>
+      </div>
+
+      <div class="lm-divider"><span>or</span></div>
+
+      <button class="lm-admin-btn" onclick="closeLoginModal(); window.location.href='admin.html'">
+        🛡️ &nbsp; Staff Admin Login
+      </button>
+
+      <button class="lm-close" onclick="closeLoginModal()" title="Close">✕</button>
+
+      <!-- 3D Watermark -->
+      <div class="lm-watermark">Made by <strong>Sriramgandhi.dev</strong></div>
+    </div>
+  </div>
+
   <!-- ─── FOOTER ─── -->
   <footer>
     <div class="footer-top">
@@ -1175,6 +1427,32 @@
       const el = document.getElementById('hero-parallax');
       if (el) el.style.transform = `translateY(${window.scrollY * 0.25}px)`;
     }, { passive: true });
+
+    // Login modal
+    function openLoginModal() {
+      const overlay = document.getElementById('login-modal-overlay');
+      overlay.style.display = 'flex';
+      requestAnimationFrame(() => {
+        overlay.classList.add('active');
+      });
+      document.body.style.overflow = 'hidden';
+      // Re-render Google button inside modal
+      if (window.google && window.google.accounts) {
+        try { google.accounts.id.renderButton(document.querySelector('.g_id_signin'), { type: 'standard', shape: 'rectangular', theme: 'filled_black', text: 'signin_with', size: 'large', logo_alignment: 'left', width: 320 }); } catch (e) { }
+      }
+    }
+    function closeLoginModal() {
+      const overlay = document.getElementById('login-modal-overlay');
+      overlay.classList.remove('active');
+      setTimeout(() => { overlay.style.display = 'none'; }, 300);
+      document.body.style.overflow = '';
+    }
+    // ESC key
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLoginModal(); });
+    // Hero CTA buttons that say #auth should open modal
+    document.querySelectorAll('a[href="#auth"]').forEach(a => {
+      a.addEventListener('click', e => { e.preventDefault(); openLoginModal(); });
+    });
   </script>
   <script src="script.js" defer></script>
 </body>
