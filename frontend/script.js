@@ -7,6 +7,9 @@ let API_BASE = window.location.pathname.includes('static')
 if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
   API_BASE = window.location.protocol + "//" + window.location.host;
 }
+
+// Global JWT Token state
+let jwtToken = sessionStorage.getItem("jwtToken") || null;
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const output = document.getElementById("output");
@@ -554,7 +557,7 @@ function init3DBackground() {
   container.appendChild(renderer.domElement);
 
   const geometry = new THREE.BufferGeometry();
-  const particleCount = window.innerWidth > 900 ? 5000 : 1500; // Increased density
+  const particleCount = window.innerWidth > 900 ? 3000 : 1200; // Optimized density for performance
   const vertices = [];
   const velocities = [];
 
@@ -615,13 +618,6 @@ function init3DBackground() {
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 }
-
-function initPage() {
-  init3DBackground();
-  if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
-}
-
-let jwtToken = sessionStorage.getItem("jwtToken");
 
 async function fetchAnalytics() {
   if (!jwtToken) return;
@@ -797,7 +793,8 @@ async function handleGoogleLogin(response) {
 
 function checkAuthProtection() {
   const page = document.body.dataset.page;
-  if (!jwtToken && page !== "home" && page !== "login") {
+  // Allow home, register (for face reg), and admin login to bypass redirect
+  if (!jwtToken && page !== "home" && page !== "login" && page !== "admin") {
     console.warn("Unauthorized access attempt. Redirecting to home.");
     window.location.href = "index.html";
   }
@@ -807,49 +804,87 @@ function checkAuthProtection() {
 document.addEventListener("DOMContentLoaded", initPage);
 
 function initPage() {
-  init3DBackground();
-  if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+  try {
+    init3DBackground();
+    if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
 
-  checkAuthProtection();
+    checkAuthProtection();
 
-  const page = document.body.dataset.page;
-  if (page === "dashboard") {
-    loadMonths().then(() => loadReport(getSelectedMonth()));
-    dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
-    setTimeout(fetchAnalytics, 1000);
-    startCamera();
-  } else if (page === "register") {
-    startCamera();
-  } else if (page === "profile") {
-    const dl = document.getElementById("class-list-datalist");
-    if (dl && typeof CLASS_LIST !== 'undefined') {
-      dl.innerHTML = CLASS_LIST.map(n => `<option value="${n}">`).join("");
+    const page = document.body.dataset.page;
+    if (page === "dashboard") {
+      loadMonths().then(() => loadReport(getSelectedMonth()));
+      dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
+      setTimeout(fetchAnalytics, 1000);
+      startCamera();
+    } else if (page === "register") {
+      startCamera();
+    } else if (page === "profile") {
+      const dl = document.getElementById("class-list-datalist");
+      if (dl && typeof CLASS_LIST !== 'undefined') {
+        dl.innerHTML = CLASS_LIST.map(n => `<option value="${n}">`).join("");
+      }
     }
+  } catch (err) {
+    console.error("Critical Page Init Failure:", err);
   }
 }
 
-function logoutGoogle() {
+function logout() {
+  console.log("Logging out...");
   sessionStorage.removeItem("jwtToken");
   sessionStorage.removeItem("role");
   sessionStorage.removeItem("userInfo");
   jwtToken = null;
+  if (typeof stopAttendance === 'function') stopAttendance();
   window.location.href = "index.html";
 }
 
 function openAdminRegister() {
-  const entered = prompt("Enter Admin ID: (e.g. sriram.dev)");
+  const entered = prompt("Enter Admin ID: (e.g. Sriramgandhi.Dev)");
   if (!entered) return;
   const pwd = prompt("Enter Admin Password:");
-  if (entered === "sriram.dev" && pwd === "1234") {
+
+  // Support both original and requested admin bypass in frontend as well
+  if ((entered === "sriram.dev" && pwd === "1234") ||
+    (entered === "Sriramgandhi.Dev" && pwd === "1234")) {
     window.location.href = "register.html";
   } else {
     alert("Invalid Admin Credentials");
   }
 }
 
+async function loginAdmin(event) {
+  if (event) event.preventDefault();
+  const name = document.getElementById("admin-user").value;
+  const password = document.getElementById("admin-pass").value;
+  const output = document.getElementById("output");
+
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "admin", name, password })
+    });
+    const data = await res.json();
+
+    if (data.status === "success") {
+      sessionStorage.setItem("jwtToken", data.token);
+      sessionStorage.setItem("role", data.role);
+      jwtToken = data.token;
+      if (output) output.innerText = "Authenticated! Redirecting...";
+      setTimeout(() => window.location.href = "dashboard.html", 1000);
+    } else {
+      if (output) output.innerText = "Error: " + (data.message || "Invalid credentials");
+    }
+  } catch (err) {
+    if (output) output.innerText = "Connection error: " + err.message;
+  }
+}
+
+window.logout = logout;
 window.handleGoogleLogin = handleGoogleLogin;
-window.logoutGoogle = logoutGoogle;
 window.openAdminRegister = openAdminRegister;
+window.loginAdmin = loginAdmin;
 window.startAttendance = startAttendance;
 window.stopAttendance = stopAttendance;
 window.registerStudent = registerStudent;

@@ -20,6 +20,7 @@
       <a href="register.html">Registration</a>
       <a href="dashboard.html" class="active">Dashboard</a>
       <a href="profile.html">Student Profile</a>
+      <a href="#" onclick="logout(); return false;">Logout</a>
     </nav>
   </header>
 
@@ -27,6 +28,29 @@
     <div class="dashboard-header">
       <h2>Attendance Dashboard</h2>
       <button class="btn" onclick="loadReport()">Refresh</button>
+    </div>
+
+    <!-- Camera / Attendance Control Panel -->
+    <div class="hero" style="margin-top: 0; margin-bottom: 24px; gap: 18px;">
+      <div class="hero-media">
+        <div class="camera-card">
+          <video id="video" autoplay muted playsinline></video>
+          <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+        <div class="card-actions" style="justify-content: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+          <button class="btn primary" onclick="startAttendance()">▶ Start Attendance</button>
+          <button class="btn" onclick="stopAttendance()">■ Stop</button>
+          <span id="scan-state" class="pill" style="align-self: center;">Stopped</span>
+        </div>
+      </div>
+      <div class="hero-inner">
+        <h3 style="margin-bottom: 10px; color: var(--accent);">Live Recognition</h3>
+        <p style="color: var(--muted); font-size: 0.95rem;">
+          Point the camera at the class. The system will automatically detect and mark attendance every 3 seconds using
+          face recognition.
+        </p>
+        <pre id="output" class="output" style="margin-top: 14px; min-height: 80px;">Ready.</pre>
+      </div>
     </div>
 
     <div class="dashboard-controls">
@@ -110,7 +134,6 @@
       </table>
     </div>
 
-    <pre id="output" class="output"></pre>
   </main>
 
   <footer class="site-footer">
