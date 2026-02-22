@@ -69,174 +69,31 @@
         </div>
 
         <p id="auth-error" class="hidden error-text">Access Denied: Please use an @psnacet.edu.in email.</p>
+        <p style="margin-top: 15px; font-size: 0.8rem; color: #8af1ff; opacity: 0.7;">
+          Note: Login requires running via server (localhost:5000), not file://
+        </p>
       </div>
     </section>
 
   </main>
 
-  <!-- Dashboard Overlay (Hidden until Auth) -->
-  <div id="app-dashboard" class="hidden full-overlay">
-    <header class="site-header">
-      <div class="logo">SmartAttendance <span class="badge safe">Verified</span></div>
-      <nav class="nav">
-        <button class="nav-btn active" onclick="switchTab('capture')">Capture</button>
-        <button class="nav-btn" onclick="switchTab('roster')">Roster (8-Period)</button>
-        <button class="nav-btn" onclick="switchTab('analytics')">Intelligence</button>
-        <button class="nav-btn" onclick="switchTab('profile')">Management</button>
-        <button class="nav-btn" onclick="logoutGoogle()">Logout</button>
-      </nav>
-    </header>
-
-    <div class="dashboard-content" id="tab-capture">
-      <section class="hero compact-hero">
-        <div class="hero-inner">
-          <h1 style="font-size:2.5rem;">Live Attendance Feed</h1>
-          <p>Camera scans all faces and marks attendance dynamically.</p>
-          <div class="cta">
-            <button class="btn primary" onclick="startAttendance()">Start Camera</button>
-            <button class="btn" onclick="stopAttendance()">Stop Camera</button>
-            <button class="btn ghost" onclick="openAdminRegister()">Register Student (Admin)</button>
-          </div>
-          <div class="status-row">
-            <span id="scan-state" class="pill">Stopped</span>
-          </div>
-        </div>
-        <div class="hero-media">
-          <div class="camera-card">
-            <video id="video" autoplay muted playsinline></video>
-            <canvas id="canvas" class="hidden"></canvas>
-          </div>
-          <pre id="output" class="output"></pre>
-        </div>
-      </section>
-    </div>
-
-    <div class="dashboard-content hidden" id="tab-roster">
-      <div class="dashboard-header" style="margin-bottom: 2rem;">
-        <h2>Attendance Roster</h2>
-        <div class="dashboard-controls">
-          <select id="month-select" class="btn ghost"></select>
-          <button class="btn primary" onclick="loadSelectedMonth()">Filter Month</button>
-          <button class="btn ghost" onclick="loadReport()">Refresh</button>
-        </div>
-      </div>
-      <div class="table-wrap" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-perspective="2000">
-        <table id="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>P1 (8am)</th>
-              <th>P2 (9am)</th>
-              <th>P3 (10am)</th>
-              <th>P4 (11am)</th>
-              <th>P5 (12pm)</th>
-              <th>P6 (1pm)</th>
-              <th>P7 (2pm)</th>
-              <th>P8 (3pm)</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="dashboard-content hidden" id="tab-analytics">
-      <section class="analytics-panel card compact">
-        <div class="analytics-header"
-          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-          <h3>Classroom Intelligence</h3>
-          <div class="badges">
-            <span class="badge safe">Safe >85%</span>
-            <span class="badge risk">Risk <75%< /span>
-                <span class="badge critical">Critical <60%< /span>
-          </div>
-        </div>
-        <div class="stats-row" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
-          <div class="stat-box"
-            style="flex: 1; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(138,241,255,0.1);">
-            <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff; text-transform: uppercase; letter-spacing: 1px;">
-              Live Occupancy</h4>
-            <p id="stat-occupancy" style="margin:10px 0 0 0; font-size: 2rem; font-weight: bold; color: #fff;">--</p>
-          </div>
-          <div class="stat-box"
-            style="flex: 1; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(138,241,255,0.1);">
-            <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff; text-transform: uppercase; letter-spacing: 1px;">
-              Most Skipped Period</h4>
-            <p id="stat-skipped" style="margin:10px 0 0 0; font-size: 2rem; font-weight: bold; color: #fff;">--</p>
-          </div>
-        </div>
-        <div class="charts-row" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-          <div class="chart-container"
-            style="flex: 1; min-width: 320px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
-            <h4 style="margin-bottom:15px;">Weekly Attendance Trend</h4>
-            <canvas id="trendChart"></canvas>
-          </div>
-          <div class="heatmap-container"
-            style="flex: 1; min-width: 320px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
-            <h4 style="margin-bottom:15px;">Period vs Day Heatmap</h4>
-            <div id="heatmap-grid" class="heatmap-grid"></div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div class="dashboard-content hidden" id="tab-profile">
-      <div class="dashboard-header" style="margin-bottom: 2rem;">
-        <h2>System Management</h2>
-      </div>
-      <div class="dashboard-controls" style="margin-bottom: 2rem;">
-        <input id="profile-search-name" list="class-list-datalist" placeholder="Enter student name to manage..."
-          style="width: 300px;">
-        <datalist id="class-list-datalist"></datalist>
-        <button class="btn primary" onclick="searchProfilePage()">Search Profile</button>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
-        <section id="profile-result" class="card compact hidden" style="background: rgba(138,241,255,0.05);"></section>
-
-        <section id="admin-edit" class="card compact hidden" style="background: rgba(255,255,255,0.05);">
-          <h3>Admin Editor</h3>
-          <label class="field">Current Identity
-            <input type="text" id="edit-current-name" readonly style="background: rgba(0,0,0,0.2);">
-          </label>
-          <label class="field">Apply New Name
-            <input type="text" id="edit-new-name" placeholder="Leave blank to skip">
-          </label>
-          <label class="field">Department / Meta Info
-            <input type="text" id="edit-details" placeholder="e.g. CSE-B / 3rd Year">
-          </label>
-          <div id="daily-attendance-editor" class="table-wrap hidden" style="margin: 1rem 0;"></div>
-          <div class="card-actions left">
-            <button class="btn primary" onclick="saveStudentUpdate()">Commit Changes</button>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 
   <script>
     // Handle Parallax Scrolling Effect
     const container = document.getElementById('parallax-container');
-    container.addEventListener('scroll', () => {
-      const scrolled = container.scrollTop;
-      document.querySelectorAll('.parallax-layer').forEach(layer => {
-        const speed = parseFloat(layer.getAttribute('style').split('speed:')[1]) || 0.1;
-        const yPos = -(scrolled * speed);
-        layer.style.transform = `translateY(${yPos}px)`;
+    if (container) {
+      container.addEventListener('scroll', () => {
+        const scrolled = container.scrollTop;
+        document.querySelectorAll('.parallax-layer').forEach(layer => {
+          const speedString = layer.getAttribute('style').split('speed:')[1];
+          const speed = parseFloat(speedString) || 0.1;
+          const yPos = -(scrolled * speed);
+          layer.style.transform = `translateY(${yPos}px)`;
+        });
       });
-    });
-
-    function switchTab(tab) {
-      document.querySelectorAll('.dashboard-content').forEach(c => c.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      event.target.classList.add('active');
     }
   </script>
 </body>

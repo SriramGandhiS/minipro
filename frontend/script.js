@@ -600,20 +600,25 @@ async function fetchAnalytics() {
   if (!jwtToken) return;
 
   try {
-    const intRes = await fetch(`${API_BASE}/api/analytics/intelligence`, { headers: { "Authorization": "Bearer " + jwtToken } });
+    const headers = { "Authorization": "Bearer " + jwtToken };
+    const intRes = await fetch(`${API_BASE}/api/analytics/intelligence`, { headers });
     const intData = await intRes.json();
     if (intData.status === "success") {
-      document.getElementById("stat-occupancy").textContent = intData.occupancy;
-      document.getElementById("stat-skipped").textContent = intData.most_skipped_period;
+      const occ = document.getElementById("stat-occupancy");
+      const skip = document.getElementById("stat-skipped");
+      if (occ) occ.textContent = intData.occupancy;
+      if (skip) skip.textContent = intData.most_skipped_period;
     }
 
-    const heatRes = await fetch(`${API_BASE}/api/analytics/heatmap`, { headers: { "Authorization": "Bearer " + jwtToken } });
+    const heatRes = await fetch(`${API_BASE}/api/analytics/heatmap`, { headers });
     const heatData = await heatRes.json();
     if (heatData.status === "success") {
       renderHeatmap(heatData.heatmap);
       renderTrendChart(heatData.heatmap);
     }
-  } catch (e) { console.error("Analytics error", e); }
+  } catch (e) {
+    console.error("Analytics error", e);
+  }
 }
 
 function renderHeatmap(data) {
@@ -738,40 +743,70 @@ async function handleGoogleLogin(response) {
 
     const data = await res.json();
     if (!res.ok) {
-      document.getElementById("auth-error").textContent = data.message;
-      document.getElementById("auth-error").classList.remove("hidden");
+      const errEl = document.getElementById("auth-error");
+      if (errEl) {
+        errEl.textContent = data.message;
+        errEl.classList.remove("hidden");
+      }
       return;
     }
 
-    // Unlock Dashboard
+    // Save token and info
     jwtToken = data.token;
     sessionStorage.setItem("jwtToken", jwtToken);
     sessionStorage.setItem("role", data.role);
+    sessionStorage.setItem("userInfo", JSON.stringify(data.user_info));
 
-    document.getElementById("parallax-container").classList.add("hidden");
-    const dash = document.getElementById("app-dashboard");
-    if (dash) dash.classList.remove("hidden");
+    // Redirect to dashboard
+    window.location.href = "dashboard.html";
+  } catch (err) {
+    const errEl = document.getElementById("auth-error");
+    if (errEl) {
+      errEl.textContent = "Connection error. Ensure backend is running.";
+      errEl.classList.remove("hidden");
+    }
+  }
+}
 
-    document.getElementById("three-bg").style.display = 'none'; // Save resources
+function checkAuthProtection() {
+  const page = document.body.dataset.page;
+  if (!jwtToken && page !== "home" && page !== "login") {
+    console.warn("Unauthorized access attempt. Redirecting to home.");
+    window.location.href = "index.html";
+  }
+}
 
-    // Initialize Dashboard Components
+// Run init on load
+document.addEventListener("DOMContentLoaded", initPage);
+
+function initPage() {
+  init3DBackground();
+  if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
+
+  checkAuthProtection();
+
+  const page = document.body.dataset.page;
+  if (page === "dashboard") {
     loadMonths().then(() => loadReport(getSelectedMonth()));
+    dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
     setTimeout(fetchAnalytics, 1000);
     startCamera();
-  } catch (err) {
-    document.getElementById("auth-error").textContent = "Connection error. Ensure backend is running.";
-    document.getElementById("auth-error").classList.remove("hidden");
+  } else if (page === "register") {
+    startCamera();
+  } else if (page === "profile") {
+    const dl = document.getElementById("class-list-datalist");
+    if (dl && typeof CLASS_LIST !== 'undefined') {
+      dl.innerHTML = CLASS_LIST.map(n => `<option value="${n}">`).join("");
+    }
   }
 }
 
 function logoutGoogle() {
   sessionStorage.removeItem("jwtToken");
   sessionStorage.removeItem("role");
+  sessionStorage.removeItem("userInfo");
   jwtToken = null;
-  document.getElementById("app-dashboard").classList.add("hidden");
-  document.getElementById("parallax-container").classList.remove("hidden");
-  document.getElementById("three-bg").style.display = 'block';
-  stopAttendance();
+  window.location.href = "index.html";
 }
 
 function openAdminRegister() {
@@ -797,5 +832,3 @@ window.searchProfilePage = searchProfilePage;
 window.openAdminEdit = openAdminEdit;
 window.saveStudentUpdate = saveStudentUpdate;
 window.loadSelectedMonth = loadSelectedMonth;
-
-document.addEventListener("DOMContentLoaded", initPage);
