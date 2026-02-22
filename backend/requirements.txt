@@ -1,5 +1,7 @@
 flask
+flask-cors
 opencv-python
-face-recognition
 numpy
 gunicorn
+PyJWT
+Pillow
