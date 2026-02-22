@@ -1,4 +1,12 @@
-const API_BASE = "http://127.0.0.1:5000";
+// Detect API base URL dynamically
+let API_BASE = window.location.pathname.includes('static') 
+  ? window.location.origin 
+  : (window.location.protocol + "//" + window.location.host);
+
+// For Render: automatically use the current domain
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  API_BASE = window.location.protocol + "//" + window.location.host;
+}
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const output = document.getElementById("output");

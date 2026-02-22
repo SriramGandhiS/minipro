@@ -52,7 +52,24 @@ def index():
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "ok"}), 200
+    return jsonify({"status": "ok", "message": "Backend is running"}), 200
+
+@app.route("/api/test", methods=["GET"])
+def test_endpoints():
+    """Test endpoint to verify all functionality"""
+    return jsonify({
+        "status": "ok",
+        "message": "Backend is working correctly",
+        "endpoints": {
+            "home": "/",
+            "register": "/register",
+            "attendance": "/attendance",
+            "login": "/api/login",
+            "report": "/report",
+            "dashboard": "/api/analytics/heatmap",
+            "health": "/health"
+        }
+    }), 200
 
 DATA_PATH = "data"
 ENCODING_FILE = "data/encodings.pkl"
@@ -660,6 +677,13 @@ def get_students():
     students = [{"name": row[0]} for row in c.fetchall()]
     conn.close()
     return jsonify(students)
+
+# Catch-all route - serve index for all non-API routes (single-page app support)
+@app.route('/<path:path>')
+def catch_all(path):
+    if path.startswith('api/') or path.startswith('static/'):
+        return jsonify({"status": "error", "message": "Endpoint not found"}), 404
+    return app.send_static_file("index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
