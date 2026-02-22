@@ -546,86 +546,62 @@ async function loadSelectedMonth() {
 
 function init3DBackground() {
   const container = document.getElementById("three-bg");
-  if (!container || !window.THREE) return;
+  if (!container) return;
 
-  // WebGL check - prevents hanging on devices without GPU support
-  try {
-    const testCanvas = document.createElement('canvas');
-    const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-    if (!gl) { console.warn('WebGL not supported. Skipping 3D background.'); return; }
-  } catch (e) { return; }
+  // Zero-dependency canvas particle background — no CDN needed
+  const bgCanvas = document.createElement("canvas");
+  bgCanvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;";
+  container.appendChild(bgCanvas);
+  const ctx = bgCanvas.getContext("2d");
 
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x051016, 0.0011);
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-  camera.position.z = 900;
+  let W, H, pts;
 
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  container.appendChild(renderer.domElement);
-
-  const geometry = new THREE.BufferGeometry();
-  const particleCount = window.innerWidth > 900 ? 3000 : 1200; // Optimized density for performance
-  const vertices = [];
-  const velocities = [];
-
-  for (let i = 0; i < particleCount; i++) {
-    vertices.push((Math.random() - 0.5) * 2500);
-    vertices.push((Math.random() - 0.5) * 2500);
-    vertices.push((Math.random() - 0.5) * 2500);
-    velocities.push((Math.random() - 0.5) * 0.2); // Slow drift
+  function resize() {
+    W = bgCanvas.width = window.innerWidth;
+    H = bgCanvas.height = window.innerHeight;
   }
 
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
-  const material = new THREE.PointsMaterial({
-    color: 0xffffff, // Pure white dots as requested
-    size: 3.5, // Slightly larger "fancy" dots
-    opacity: 0.6,
-    transparent: true,
-    sizeAttenuation: true
-  });
+  function initParticles() {
+    const count = window.innerWidth > 900 ? 180 : 80;
+    pts = Array.from({ length: count }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.8 + 0.4,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      o: Math.random() * 0.45 + 0.15
+    }));
+  }
 
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255," + p.o + ")";
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = "rgba(255,255,255,0.6)";
+      ctx.fill();
+      p.x = (p.x + p.dx + W) % W;
+      p.y = (p.y + p.dy + H) % H;
+    }
+    requestAnimationFrame(draw);
+  }
 
+  // Custom cursor follow
   const cursor = document.getElementById("cursor");
   document.addEventListener("mousemove", e => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-
-    // Fancy Dot Cursor Follow
     if (cursor) {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-
-      const target = e.target;
-      const isInteractive = target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('.btn');
-      cursor.classList.toggle('hovering', !!isInteractive);
+      cursor.style.left = e.clientX + "px";
+      cursor.style.top = e.clientY + "px";
+      const t = e.target;
+      cursor.classList.toggle("hovering", !!(t.tagName === "A" || t.tagName === "BUTTON" || t.closest(".btn")));
     }
   });
 
-  function animate() {
-    requestAnimationFrame(animate);
-
-    // Smooth flowing rotation
-    particles.rotation.y += 0.0012;
-    particles.rotation.x += 0.0004;
-
-    // Interactive drift based on mouse
-    camera.position.x += (mouseX * 400 - camera.position.x) * 0.02;
-    camera.position.y += (mouseY * 400 - camera.position.y) * 0.02;
-
-    camera.lookAt(scene.position);
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+  window.addEventListener("resize", () => { resize(); initParticles(); });
+  resize();
+  initParticles();
+  draw();
 }
 
 async function fetchAnalytics() {
