@@ -5,6 +5,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     g++ \
+    libgl1 \
+    libglib2.0-0 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -24,4 +26,4 @@ COPY frontend/ ../frontend/
 EXPOSE 5000
 
 # Run the application
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5000", "--max-requests", "1000", "--max-requests-jitter", "100", "--timeout", "60", "app:app"]
+CMD sh -c "gunicorn -w 1 -b 0.0.0.0:${PORT:-5000} --max-requests 1000 --max-requests-jitter 100 --timeout 60 app:app"
