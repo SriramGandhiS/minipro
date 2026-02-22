@@ -5,104 +5,143 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Smart Attendance | Take Attendance</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="app.css">
 </head>
 
 <body data-page="attendance">
-    <div id="three-bg"></div>
-    <div class="custom-cursor" id="cursor"></div>
 
-    <header class="site-header">
-        <div class="logo">SmartAttendance</div>
-        <nav class="nav">
-            <a href="index.html">Home</a>
-            <a href="register.html">Registration</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="attendance.html" class="active">Attendance</a>
-            <a href="profile.html">Student Profile</a>
-            <a href="#" onclick="logout(); return false;">Logout</a>
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">SA</div>
+            <div>
+                <div class="brand-name">SmartAttendance</div>
+                <div class="brand-sub">PSNACET · Admin</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main</div>
+            <a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span>Dashboard</a>
+            <a href="attendance.html" class="nav-link active"><span class="nav-icon">📷</span>Take Attendance</a>
+            <a href="register.html" class="nav-link"><span class="nav-icon">➕</span>Register Student</a>
+            <a href="profile.html" class="nav-link"><span class="nav-icon">👤</span>Student Profile</a>
+            <div class="nav-section-label">More</div>
+            <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span>Home</a>
         </nav>
+        <div class="sidebar-footer">
+            <div class="user-row">
+                <div class="user-avatar" id="user-av">A</div>
+                <div>
+                    <div class="user-info-name" id="user-nm">Admin</div>
+                    <div class="user-info-role">Administrator</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Sign Out</button>
+        </div>
+    </aside>
+
+    <!-- TOP BAR -->
+    <header class="app-topbar">
+        <div class="topbar-left">
+            <span class="topbar-title">Take Attendance</span>
+        </div>
+        <div class="topbar-right">
+            <div class="topbar-date" id="topbar-date"></div>
+            <span id="scan-state">Stopped</span>
+            <a href="dashboard.html" class="topbar-cta">📊 View Dashboard</a>
+        </div>
     </header>
 
-    <main style="width: min(900px, 95%); margin: 40px auto; padding: 0 16px;">
+    <!-- MAIN -->
+    <main class="app-main">
+        <div class="page-body">
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <div>
-                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 4px;">📷 Take Attendance</h2>
-                <p style="color: var(--muted); font-size: 0.9rem;">AI Face Recognition — marks students automatically
-                    every 3 seconds.</p>
-            </div>
-        </div>
-
-        <!-- Camera Section -->
-        <div class="hero" style="margin: 0; gap: 20px; align-items: flex-start;">
-
-            <!-- Left: Camera -->
-            <div class="hero-media">
-                <div class="camera-card">
-                    <video id="video" autoplay muted playsinline></video>
-                    <canvas id="canvas" style="display:none;"></canvas>
+            <div class="section-hdr">
+                <div>
+                    <h2>AI Face Recognition</h2>
+                    <p>Point the camera at the class — students are marked automatically every 3 seconds</p>
                 </div>
+            </div>
 
-                <!-- Controls -->
-                <div class="card" style="margin-top: 14px; padding: 18px;">
-                    <div class="card-actions" style="justify-content: center; flex-wrap: wrap; gap: 10px;">
-                        <button class="btn primary" onclick="startAttendance()"
-                            style="flex: 1; min-width: 130px; text-align: center;">
-                            ▶ Start Scanning
-                        </button>
-                        <button class="btn" onclick="stopAttendance()"
-                            style="flex: 1; min-width: 130px; text-align: center;">
-                            ■ Stop
-                        </button>
+            <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:20px;align-items:start;">
+
+                <!-- Camera -->
+                <div>
+                    <div class="camera-wrap" style="margin-bottom:14px;">
+                        <video id="video" autoplay muted playsinline></video>
+                        <canvas id="canvas" style="display:none;"></canvas>
                     </div>
-                    <div style="text-align: center; margin-top: 14px;">
-                        <span id="scan-state" class="pill">Stopped</span>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn-accent" onclick="startAttendance()" style="flex:1;">▶ Start Scanning</button>
+                        <button class="btn-outline" onclick="stopAttendance()" style="flex:1;">■ Stop</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right: Status & Info -->
-            <div class="hero-inner" style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="card compact" style="padding: 20px;">
-                    <h3 style="color: var(--accent); margin-bottom: 8px; font-size: 1rem;">How it works</h3>
-                    <ul style="color: var(--muted); font-size: 0.88rem; line-height: 1.8; padding-left: 18px;">
-                        <li>Camera will start when you click <strong style="color:#fff;">▶ Start Scanning</strong></li>
-                        <li>Faces are recognized every <strong style="color:#fff;">3 seconds</strong> automatically</li>
-                        <li>Attendance is marked in real-time to the database</li>
-                        <li>Click <strong style="color:#fff;">■ Stop</strong> when the class ends</li>
-                        <li>View results on the <a href="dashboard.html" style="color: var(--accent);">Dashboard</a>
-                        </li>
-                    </ul>
+                <!-- Info + Log -->
+                <div style="display:flex;flex-direction:column;gap:14px;">
+                    <div class="card">
+                        <div class="card-title">How It Works</div>
+                        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+                            <div class="info-row"><span
+                                    style="background:rgba(203,255,77,0.1);color:var(--accent);width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;">1</span><span
+                                    style="color:var(--text-dim);font-size:0.82rem;">Click <strong
+                                        style="color:var(--accent);">Start Scanning</strong> to begin</span></div>
+                            <div class="info-row"><span
+                                    style="background:rgba(203,255,77,0.1);color:var(--accent);width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;">2</span><span
+                                    style="color:var(--text-dim);font-size:0.82rem;">Faces are recognized every <strong
+                                        style="color:var(--text);">3 seconds</strong></span></div>
+                            <div class="info-row"><span
+                                    style="background:rgba(203,255,77,0.1);color:var(--accent);width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;">3</span><span
+                                    style="color:var(--text-dim);font-size:0.82rem;">Attendance saved to database
+                                    automatically</span></div>
+                            <div class="info-row"><span
+                                    style="background:rgba(203,255,77,0.1);color:var(--accent);width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0;">4</span><span
+                                    style="color:var(--text-dim);font-size:0.82rem;">Click <strong
+                                        style="color:var(--text);">Stop</strong> at end of class</span></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Recognition Log</div>
+                        <div style="margin-top:10px;">
+                            <pre id="output">Ready. Press Start Scanning to begin.</pre>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;">
+                        <a href="register.html" class="btn-outline" style="flex:1;text-align:center;">➕ Register New
+                            Student</a>
+                    </div>
                 </div>
 
-                <!-- Live recognition output -->
-                <div class="card compact" style="padding: 20px;">
-                    <h3 style="color: var(--accent); margin-bottom: 10px; font-size: 1rem;">Recognition Log</h3>
-                    <pre id="output" class="output"
-                        style="min-height: 160px; max-height: 300px; overflow-y: auto; font-size: 0.82rem;">Ready. Press Start to begin.</pre>
-                </div>
-
-                <!-- Quick links -->
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <a href="dashboard.html" class="btn" style="flex: 1; text-align: center; text-decoration: none;">📊
-                        View Dashboard</a>
-                    <a href="register.html" class="btn" style="flex: 1; text-align: center; text-decoration: none;">➕
-                        Register Student</a>
-                </div>
             </div>
         </div>
-
     </main>
 
-    <footer class="site-footer">
-        <span>&copy; 2026 Smart Attendance | PSNACET</span>
-    </footer>
+    <!-- CHAT -->
+    <button id="chat-toggle-btn" onclick="toggleChat()">💬</button>
+    <div id="admin-chat-widget">
+        <div class="chat-header" onclick="toggleChat()">🤖 AI Assistant <span>▼</span></div>
+        <div class="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="msg ai">Ask me about attendance data.</div>
+            </div>
+            <div class="chat-input-area">
+                <input id="chat-input" placeholder="Ask…" onkeypress="if(event.key==='Enter')sendAdminChat()">
+                <button onclick="sendAdminChat()">→</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+        document.addEventListener('DOMContentLoaded', () => {
+            const info = sessionStorage.getItem('userInfo');
+            if (info) { try { const u = JSON.parse(info); const n = u.name || 'Admin'; document.getElementById('user-nm').textContent = n.split(' ')[0]; document.getElementById('user-av').textContent = n[0].toUpperCase(); } catch (_) { } }
+        });
+        function toggleChat() { document.getElementById('admin-chat-widget').classList.toggle('open'); }
+    </script>
     <script src="script.js" defer></script>
 </body>
-
-</html>
 
 </html>

@@ -4,57 +4,166 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Smart Attendance | Registration</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>Smart Attendance | Register Student</title>
+  <link rel="stylesheet" href="app.css">
 </head>
 
 <body data-page="register">
-  <div id="three-bg"></div>
-  <div class="custom-cursor" id="cursor"></div>
 
-  <header class="site-header">
-    <div class="logo">SmartAttendance</div>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="register.html" class="active">Registration</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="attendance.html">Attendance</a>
-      <a href="profile.html">Student Profile</a>
-      <a href="#" onclick="logout(); return false;">Logout</a>
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">SA</div>
+      <div>
+        <div class="brand-name">SmartAttendance</div>
+        <div class="brand-sub">PSNACET · Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="attendance.html" class="nav-link"><span class="nav-icon">📷</span>Take Attendance</a>
+      <a href="register.html" class="nav-link active"><span class="nav-icon">➕</span>Register Student</a>
+      <a href="profile.html" class="nav-link"><span class="nav-icon">👤</span>Student Profile</a>
+      <div class="nav-section-label">More</div>
+      <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span>Home</a>
     </nav>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar" id="user-av">A</div>
+        <div>
+          <div class="user-info-name" id="user-nm">Admin</div>
+          <div class="user-info-role">Administrator</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- TOP BAR -->
+  <header class="app-topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">Register Student</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbar-date"></div>
+      <div class="topbar-icon-btn" title="Notifications">🔔<span class="notif-dot"></span></div>
+    </div>
   </header>
 
-  <main class="center-card">
-    <div class="card" data-tilt data-tilt-max="6" data-tilt-speed="400" data-tilt-perspective="1100">
-      <h2>Student Registration</h2>
-      <label class="field">Student Name
-        <input type="text" id="name" placeholder="Enter full name">
-      </label>
-      <label class="field">Student Details
-        <input type="text" id="details" placeholder="Department / Year / Roll No">
-      </label>
+  <!-- MAIN -->
+  <main class="app-main">
+    <div class="page-body">
 
-      <div class="camera-preview">
-        <video id="video" autoplay muted playsinline></video>
-        <canvas id="canvas" class="hidden"></canvas>
+      <div class="section-hdr">
+        <div>
+          <h2>Register New Student</h2>
+          <p>Capture face photos and add the student to the attendance system</p>
+        </div>
       </div>
 
-      <div class="card-actions">
-        <button class="btn primary" onclick="registerStudent()">Register Face</button>
-      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
 
-      <pre id="output" class="output"></pre>
+        <!-- Camera capture -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div class="card-title">Face Capture</div>
+            <div class="card-sub" style="margin-bottom:14px;">Position the student's face in frame and capture 5 photos
+            </div>
+            <div class="camera-wrap" style="margin-bottom:14px;">
+              <video id="video" autoplay muted playsinline></video>
+              <canvas id="canvas" style="display:none;"></canvas>
+            </div>
+            <button class="btn-accent" onclick="captureAndRegister()" style="width:100%;">📸 Capture &amp;
+              Register</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Instructions</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+              <div style="font-size:0.8rem;color:var(--text-dim);display:flex;gap:8px;align-items:flex-start;"><span
+                  style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Enter the student name below first
+              </div>
+              <div style="font-size:0.8rem;color:var(--text-dim);display:flex;gap:8px;align-items:flex-start;"><span
+                  style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Ensure good lighting and clear face
+                visibility</div>
+              <div style="font-size:0.8rem;color:var(--text-dim);display:flex;gap:8px;align-items:flex-start;"><span
+                  style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>System captures 5 photos
+                automatically</div>
+              <div style="font-size:0.8rem;color:var(--text-dim);display:flex;gap:8px;align-items:flex-start;"><span
+                  style="color:var(--accent);font-weight:700;flex-shrink:0;">→</span>Face data is encoded and stored
+                securely</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration form -->
+        <div>
+          <div class="form-section">
+            <div class="card-title" style="margin-bottom:20px;">Student Details</div>
+
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input id="student-name" class="form-input" placeholder="e.g. Arun Kumar S" type="text">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Roll Number</label>
+              <input id="roll-number" class="form-input" placeholder="e.g. 21CSE001" type="text">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Department</label>
+                <select id="department" class="form-select">
+                  <option value="">Select dept…</option>
+                  <option>CSE</option>
+                  <option>ECE</option>
+                  <option>EEE</option>
+                  <option>Mechanical</option>
+                  <option>Civil</option>
+                  <option>IT</option>
+                  <option>AI & DS</option>
+                  <option>MBA</option>
+                  <option>MCA</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Year</label>
+                <select id="year" class="form-select">
+                  <option>1st Year</option>
+                  <option>2nd Year</option>
+                  <option>3rd Year</option>
+                  <option>4th Year</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:8px;">
+              <pre id="output" style="border-radius:6px;">Waiting…</pre>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:18px;">
+              <button class="btn-accent" onclick="captureAndRegister()" style="flex:1;">Register Student</button>
+              <button class="btn-outline"
+                onclick="document.getElementById('student-name').value='';document.getElementById('output').textContent='Cleared.'"
+                style="flex:1;">Clear</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </main>
 
-  <footer class="site-footer">
-    <span>&copy; 2026 Smart Attendance</span>
-  </footer>
-
+  <script>
+    document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+    document.addEventListener('DOMContentLoaded', () => {
+      const info = sessionStorage.getItem('userInfo');
+      if (info) { try { const u = JSON.parse(info); const n = u.name || 'Admin'; document.getElementById('user-nm').textContent = n.split(' ')[0]; document.getElementById('user-av').textContent = n[0].toUpperCase(); } catch (_) { } }
+    });
+  </script>
   <script src="script.js" defer></script>
 </body>
-
-</html>
 
 </html>

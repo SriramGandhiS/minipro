@@ -5,82 +5,108 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Smart Attendance | Student Profile</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="app.css">
 </head>
 
 <body data-page="profile">
-  <div id="three-bg"></div>
-  <div class="custom-cursor" id="cursor"></div>
 
-  <header class="site-header">
-    <div class="logo">SmartAttendance</div>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="register.html">Registration</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="attendance.html">Attendance</a>
-      <a href="profile.html" class="active">Student Profile</a>
-      <a href="#" onclick="logout(); return false;">Logout</a>
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">SA</div>
+      <div>
+        <div class="brand-name">SmartAttendance</div>
+        <div class="brand-sub">PSNACET · Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="attendance.html" class="nav-link"><span class="nav-icon">📷</span>Take Attendance</a>
+      <a href="register.html" class="nav-link"><span class="nav-icon">➕</span>Register Student</a>
+      <a href="profile.html" class="nav-link active"><span class="nav-icon">👤</span>Student Profile</a>
+      <div class="nav-section-label">More</div>
+      <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span>Home</a>
     </nav>
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar" id="user-av">A</div>
+        <div>
+          <div class="user-info-name" id="user-nm">Admin</div>
+          <div class="user-info-role">Administrator</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- TOP BAR -->
+  <header class="app-topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">Student Profile</span>
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input id="search-input" class="form-input" placeholder="Search student by name…" list="class-list-datalist"
+          autocomplete="off" onkeypress="if(event.key==='Enter')renderProfileByName(this.value)"
+          style="border:none;background:transparent;padding:0;outline:none;font-size:0.82rem;min-width:200px;">
+        <datalist id="class-list-datalist"></datalist>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbar-date"></div>
+      <button class="topbar-cta"
+        onclick="renderProfileByName(document.getElementById('search-input').value)">Search</button>
+    </div>
   </header>
 
-  <main class="dashboard">
-    <div class="dashboard-header">
-      <h2>Student Profile</h2>
-    </div>
+  <!-- MAIN -->
+  <main class="app-main">
+    <div class="page-body">
 
-    <div class="dashboard-controls">
-      <input id="profile-search-name" list="class-list-datalist" placeholder="Enter student name">
-      <datalist id="class-list-datalist"></datalist>
-      <button class="btn primary" onclick="searchProfilePage()">Search</button>
-    </div>
-
-    <!-- Chatbot Widget Student -->
-    <button id="chat-toggle-btn" class="chat-toggle-btn hidden" onclick="toggleChat()">💬</button>
-    <div id="student-chat-widget" class="chat-widget hidden">
-      <div class="chat-header" onclick="toggleChat()">AI Student Assistant <span style="float:right">▼</span></div>
-      <div class="chat-body hidden" id="chat-body">
-        <div class="chat-messages" id="chat-messages">
-          <div class="msg ai">Hello Student. Ask me about your attendance or say 'raise attendance complaint'.</div>
-        </div>
-        <div class="chat-input-area">
-          <input type="text" id="chat-input" placeholder="Type query..."
-            onkeypress="if(event.key==='Enter') sendStudentChat()">
-          <button class="btn" onclick="sendStudentChat()">Send</button>
+      <div class="section-hdr">
+        <div>
+          <h2>Student Profiles</h2>
+          <p>Search and view individual student attendance records</p>
         </div>
       </div>
-    </div>
 
-    <section id="profile-result" class="card compact hidden"></section>
-
-    <section id="admin-edit" class="card compact hidden">
-      <h3>Admin Edit</h3>
-      <label class="field">Current Name
-        <input type="text" id="edit-current-name" readonly>
-      </label>
-      <label class="field">New Name
-        <input type="text" id="edit-new-name" placeholder="Optional">
-      </label>
-      <label class="field">Details
-        <input type="text" id="edit-details" placeholder="Department / Year / Roll No">
-      </label>
-      <div id="daily-attendance-editor" class="table-wrap hidden"></div>
-      <div class="card-actions left">
-        <button class="btn primary" onclick="saveStudentUpdate()">Save Changes</button>
+      <!-- Empty state -->
+      <div id="profile-empty" class="card" style="text-align:center;padding:64px 32px;">
+        <div style="font-size:3rem;margin-bottom:16px;">👤</div>
+        <div class="card-title" style="font-size:1rem;">Search for a Student</div>
+        <div class="card-sub" style="margin-top:6px;">Type a student name in the search bar above and press Enter</div>
       </div>
-    </section>
 
-    <pre id="output" class="output"></pre>
+      <!-- Profile panel (filled by JS) -->
+      <section id="student-profile"></section>
+
+      <!-- Daily attendance editor (filled by JS) -->
+      <div id="daily-attendance-editor" style="margin-top:16px;"></div>
+
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <span>&copy; 2026 Smart Attendance</span>
-  </footer>
+  <script>
+    document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+    document.addEventListener('DOMContentLoaded', () => {
+      const info = sessionStorage.getItem('userInfo');
+      if (info) { try { const u = JSON.parse(info); const n = u.name || 'Admin'; document.getElementById('user-nm').textContent = n.split(' ')[0]; document.getElementById('user-av').textContent = n[0].toUpperCase(); } catch (_) { } }
 
+      // Hide empty state when profile loads
+      const orig = window.renderProfileByName;
+      window.renderProfileByNameWrapped = function (name) {
+        document.getElementById('profile-empty').style.display = 'none';
+        if (typeof renderProfileByName === 'function') renderProfileByName(name);
+      };
+    });
+
+    // Student chat widget for profile page
+    function toggleStudentChat() {
+      const el = document.getElementById('student-chat-widget');
+      if (el) el.classList.toggle('open');
+    }
+  </script>
   <script src="script.js" defer></script>
 </body>
-
-</html>
 
 </html>

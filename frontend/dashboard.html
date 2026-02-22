@@ -5,901 +5,202 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Smart Attendance | Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #f4f6fa;
-      --sidebar-bg: #111827;
-      --sidebar-text: #9ca3af;
-      --sidebar-active: #fff;
-      --sidebar-active-bg: rgba(255, 255, 255, 0.08);
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --accent: #6366f1;
-      /* indigo */
-      --accent2: #06b6d4;
-      /* cyan */
-      --green: #10b981;
-      --red: #ef4444;
-      --orange: #f59e0b;
-      --font: 'Inter', 'Helvetica Neue', sans-serif;
-      --sidebar-w: 240px;
-      --header-h: 64px;
-    }
-
-    html,
-    body {
-      height: 100%;
-    }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ── SIDEBAR ── */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: var(--sidebar-w);
-      background: var(--sidebar-bg);
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      z-index: 50;
-      overflow-y: auto;
-    }
-
-    .sidebar-logo {
-      padding: 22px 20px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    .sidebar-logo h1 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.02em;
-    }
-
-    .sidebar-logo p {
-      font-size: 0.68rem;
-      color: #4b5563;
-      margin-top: 2px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    .sidebar-nav {
-      padding: 16px 12px;
-      flex: 1;
-    }
-
-    .nav-group {
-      margin-bottom: 24px;
-    }
-
-    .nav-group-label {
-      font-size: 0.62rem;
-      font-weight: 600;
-      color: #374151;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0 8px;
-      margin-bottom: 6px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 10px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--sidebar-text);
-      text-decoration: none;
-      transition: background 0.15s, color 0.15s;
-      margin-bottom: 2px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: #d1d5db;
-    }
-
-    .nav-item.active {
-      background: var(--sidebar-active-bg);
-      color: var(--sidebar-active);
-      font-weight: 600;
-    }
-
-    .nav-item .icon {
-      font-size: 1rem;
-      width: 20px;
-      text-align: center;
-    }
-
-    .sidebar-footer {
-      padding: 14px 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .user-name {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #d1d5db;
-    }
-
-    .user-role {
-      font-size: 0.65rem;
-      color: #6b7280;
-    }
-
-    .logout-link {
-      display: block;
-      text-align: center;
-      margin-top: 10px;
-      font-size: 0.75rem;
-      color: #4b5563;
-      cursor: pointer;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .logout-link:hover {
-      color: #ef4444;
-    }
-
-    /* ── TOP HEADER ── */
-    .top-header {
-      position: fixed;
-      left: var(--sidebar-w);
-      right: 0;
-      top: 0;
-      height: var(--header-h);
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      z-index: 40;
-    }
-
-    .bread {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .bread span {
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .hdr-btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-family: var(--font);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s;
-    }
-
-    .hdr-btn.primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .hdr-btn.primary:hover {
-      background: #4f46e5;
-    }
-
-    .hdr-btn.ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .hdr-btn.ghost:hover {
-      background: var(--bg);
-    }
-
-    /* ── MAIN CONTENT ── */
-    .main-content {
-      margin-left: var(--sidebar-w);
-      margin-top: var(--header-h);
-      padding: 28px;
-      min-height: calc(100vh - var(--header-h));
-    }
-
-    /* ── STAT CARDS ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .stat-card-left .stat-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .stat-card-left .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      color: var(--text);
-    }
-
-    .stat-card-left .stat-sub {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .stat-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-    }
-
-    /* ── PANELS ── */
-    .panels-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 22px;
-    }
-
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .panel-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .panel-badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-
-    /* ── CONTROLS ── */
-    .controls-bar {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .sa-input {
-      flex: 1;
-      min-width: 160px;
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-family: var(--font);
-      outline: none;
-      background: var(--bg);
-      transition: border-color 0.2s;
-    }
-
-    .sa-input:focus {
-      border-color: var(--accent);
-    }
-
-    .sa-select {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-family: var(--font);
-      background: var(--bg);
-      outline: none;
-      cursor: pointer;
-    }
-
-    .sa-btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      font-family: var(--font);
-      transition: all 0.15s;
-    }
-
-    .sa-btn.accent {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .sa-btn.accent:hover {
-      background: #4f46e5;
-    }
-
-    .sa-btn.outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .sa-btn.outline:hover {
-      background: var(--bg);
-    }
-
-    /* ── TABLE ── */
-    .table-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-
-    .table-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .table-panel-header h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
-
-    .table-panel table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .table-panel th {
-      padding: 10px 14px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: #f9fafb;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-    }
-
-    .table-panel td {
-      padding: 11px 14px;
-      font-size: 0.82rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .table-panel tr:last-child td {
-      border-bottom: none;
-    }
-
-    .table-panel tr:hover td {
-      background: #f9fafb;
-    }
-
-    .dot-present {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-    }
-
-    .dot-absent {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #e5e7eb;
-    }
-
-    /* ── BADGES ── */
-    .badge-safe {
-      background: #d1fae5;
-      color: #065f46;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 0.68rem;
-      font-weight: 600;
-    }
-
-    .badge-risk {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 0.68rem;
-      font-weight: 600;
-    }
-
-    .badge-crit {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      font-size: 0.68rem;
-      font-weight: 600;
-    }
-
-    /* ── CHAT WIDGET ── */
-    .chat-toggle {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
-      z-index: 100;
-      transition: transform 0.15s;
-    }
-
-    .chat-toggle:hover {
-      transform: scale(1.08);
-    }
-
-    .chat-window {
-      position: fixed;
-      bottom: 84px;
-      right: 24px;
-      width: 320px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-window.open {
-      display: flex;
-    }
-
-    .chat-win-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .chat-win-header h4 {
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .chat-win-header button {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .chat-win-msgs {
-      flex: 1;
-      max-height: 260px;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .msg-bot,
-    .msg-user {
-      max-width: 88%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      line-height: 1.5;
-    }
-
-    .msg-bot {
-      background: #f3f4f6;
-      color: var(--text);
-      align-self: flex-start;
-    }
-
-    .msg-user {
-      background: var(--accent);
-      color: #fff;
-      align-self: flex-end;
-    }
-
-    .chat-win-input {
-      display: flex;
-      border-top: 1px solid var(--border);
-    }
-
-    .chat-win-input input {
-      flex: 1;
-      padding: 10px 14px;
-      border: none;
-      outline: none;
-      font-size: 0.8rem;
-      font-family: var(--font);
-      background: transparent;
-    }
-
-    .chat-win-input button {
-      padding: 10px 14px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* ── HEATMAP ── */
-    .heatmap-grid {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 3px;
-      margin-top: 8px;
-    }
-
-    .heatmap-cell {
-      aspect-ratio: 1;
-      border-radius: 3px;
-      background: #f3f4f6;
-      font-size: 0.6rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      transition: transform 0.15s;
-    }
-
-    .heatmap-cell:hover {
-      transform: scale(1.2);
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
-
-      .top-header {
-        left: 0;
-      }
-
-      .stats-row {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .panels-row {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
 
 <body data-page="dashboard">
 
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <h1>SmartAttendance</h1>
-      <p>PSNACET · Admin Panel</p>
+  <!-- SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">SA</div>
+      <div>
+        <div class="brand-name">SmartAttendance</div>
+        <div class="brand-sub">PSNACET · Admin</div>
+      </div>
     </div>
-
     <nav class="sidebar-nav">
-      <div class="nav-group">
-        <div class="nav-group-label">Main</div>
-        <a href="dashboard.html" class="nav-item active">
-          <span class="icon">📊</span> Dashboard
-        </a>
-        <a href="attendance.html" class="nav-item">
-          <span class="icon">📷</span> Take Attendance
-        </a>
-        <a href="register.html" class="nav-item">
-          <span class="icon">➕</span> Register Student
-        </a>
-        <a href="profile.html" class="nav-item">
-          <span class="icon">👤</span> Student Profile
-        </a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Reports</div>
-        <a href="dashboard.html" class="nav-item">
-          <span class="icon">📅</span> Monthly Report
-        </a>
-        <a href="dashboard.html" class="nav-item">
-          <span class="icon">📈</span> Analytics
-        </a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Account</div>
-        <a href="index.html" class="nav-item">
-          <span class="icon">🏠</span> Home
-        </a>
-        <button class="nav-item" onclick="logout()">
-          <span class="icon">🚪</span> Logout
-        </button>
-      </div>
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-link active"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="attendance.html" class="nav-link"><span class="nav-icon">📷</span>Take Attendance</a>
+      <a href="register.html" class="nav-link"><span class="nav-icon">➕</span>Register Student</a>
+      <a href="profile.html" class="nav-link"><span class="nav-icon">👤</span>Student Profile</a>
+      <div class="nav-section-label">Reports</div>
+      <a href="dashboard.html" class="nav-link"><span class="nav-icon">📅</span>Monthly Report</a>
+      <a href="dashboard.html" class="nav-link"><span class="nav-icon">📈</span>Analytics</a>
+      <div class="nav-section-label">More</div>
+      <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span>Home</a>
     </nav>
-
     <div class="sidebar-footer">
-      <div class="user-chip">
-        <div class="user-avatar" id="user-avatar-initials">A</div>
+      <div class="user-row">
+        <div class="user-avatar" id="user-av">A</div>
         <div>
-          <div class="user-name" id="sidebar-user-name">Admin</div>
-          <div class="user-role">Administrator</div>
+          <div class="user-info-name" id="user-nm">Admin</div>
+          <div class="user-info-role">Administrator</div>
         </div>
       </div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </aside>
 
-  <!-- ── TOP HEADER ── -->
-  <header class="top-header">
-    <div class="bread">Dashboard <span>/ Attendance Report</span></div>
-    <div class="header-actions">
-      <a href="attendance.html" class="hdr-btn primary">📷 Take Attendance</a>
-      <button class="hdr-btn ghost" onclick="loadReport()">↻ Refresh</button>
+  <!-- TOP BAR -->
+  <header class="app-topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-search">
+        <span>🔍</span>
+        <input id="search-name" placeholder="Search student…" onkeypress="if(event.key==='Enter')searchFromDashboard()">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbar-date"></div>
+      <div class="topbar-icon-btn" title="Notifications">🔔<span class="notif-dot"></span></div>
+      <div class="topbar-icon-btn" onclick="loadReport()" title="Refresh">↻</div>
+      <a href="attendance.html" class="topbar-cta">📷 Take Attendance</a>
     </div>
   </header>
 
-  <!-- ── MAIN ── -->
-  <main class="main-content">
+  <!-- MAIN -->
+  <main class="app-main">
+    <div class="page-body">
 
-    <!-- STAT CARDS -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-card-left">
-          <div class="stat-label">Live Occupancy</div>
-          <div class="stat-value" id="stat-occupancy">--</div>
-          <div class="stat-sub">Students present now</div>
+      <div class="section-hdr">
+        <div>
+          <h2>Attendance Overview</h2>
+          <p>Real-time classroom intelligence — auto-refreshes every 10s</p>
         </div>
-        <div class="stat-icon" style="background:#ede9fe; color:#7c3aed;">🧑‍🏫</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-left">
-          <div class="stat-label">Most Skipped</div>
-          <div class="stat-value" id="stat-skipped" style="font-size:1.3rem;">--</div>
-          <div class="stat-sub">Period with most absences</div>
+        <div style="display:flex;gap:8px;">
+          <span class="chip chip-green">● Safe &gt;85%</span>
+          <span class="chip chip-yellow">● Risk &lt;75%</span>
+          <span class="chip chip-red">● Critical &lt;60%</span>
         </div>
-        <div class="stat-icon" style="background:#fef3c7; color:#d97706;">⚠️</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-card-left">
-          <div class="stat-label">Students</div>
-          <div class="stat-value">62</div>
-          <div class="stat-sub">Total enrolled</div>
-        </div>
-        <div class="stat-icon" style="background:#d1fae5; color:#059669;">👥</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-left">
-          <div class="stat-label">Periods / Day</div>
-          <div class="stat-value">8</div>
-          <div class="stat-sub">8am – 4pm</div>
-        </div>
-        <div class="stat-icon" style="background:#e0e7ff; color:#4f46e5;">🕐</div>
-      </div>
-    </div>
 
-    <!-- CHARTS ROW -->
-    <div class="panels-row" id="analytics-panel">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Weekly Attendance Trend</span>
-          <div>
-            <span class="badge-safe">Safe &gt;85%</span>
-            <span class="badge-risk" style="margin-left:4px;">Risk &lt;75%</span>
-            <span class="badge-crit" style="margin-left:4px;">Critical &lt;60%</span>
+      <!-- STAT CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-lbl">Live Occupancy</div>
+            <div class="stat-val" id="stat-occupancy">--</div>
+            <div class="stat-note">Students present now</div>
           </div>
+          <div class="stat-badge" style="background:rgba(203,255,77,0.1);">🧑‍🏫</div>
         </div>
-        <canvas id="trendChart" style="max-height:180px;"></canvas>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Period × Day Heatmap</span>
-          <span class="panel-badge">This Week</span>
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-lbl">Most Skipped</div>
+            <div class="stat-val" id="stat-skipped" style="font-size:1.3rem;">--</div>
+            <div class="stat-note">Period with most absences</div>
+          </div>
+          <div class="stat-badge" style="background:rgba(251,146,60,0.1);">⚠️</div>
         </div>
-        <div style="font-size:0.7rem; color:var(--muted); margin-bottom:8px;">P1 – P8 / Mon – Fri</div>
-        <div id="heatmap-grid" class="heatmap-grid"></div>
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-lbl">Total Students</div>
+            <div class="stat-val">62</div>
+            <div class="stat-note">Enrolled in system</div>
+          </div>
+          <div class="stat-badge" style="background:rgba(74,222,128,0.1);">👥</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-meta">
+            <div class="stat-lbl">Periods / Day</div>
+            <div class="stat-val">8</div>
+            <div class="stat-note">8am – 4pm schedule</div>
+          </div>
+          <div class="stat-badge" style="background:rgba(79,142,255,0.1);">🕐</div>
+        </div>
       </div>
-    </div>
 
-    <!-- SEARCH + FILTER -->
-    <div class="controls-bar">
-      <input id="search-name" class="sa-input" placeholder="🔍 Search student by name…">
-      <button class="sa-btn accent" onclick="searchFromDashboard()">Search</button>
-      <select id="month-select" class="sa-select"></select>
-      <button class="sa-btn outline" onclick="loadSelectedMonth()">View Month</button>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-panel">
-      <div class="table-panel-header">
-        <h3>Attendance Records</h3>
-        <span style="font-size:0.75rem; color:var(--muted);">Auto-refreshes every 10s</span>
+      <!-- CHARTS ROW -->
+      <div class="panels-row" id="analytics-panel">
+        <div class="panel-card">
+          <div class="panel-head">
+            <h4>Weekly Attendance Trend</h4>
+            <span class="panel-tag">This Week</span>
+          </div>
+          <canvas id="trendChart" style="max-height:170px;"></canvas>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head">
+            <h4>Period × Day Heatmap</h4>
+            <span class="panel-tag">P1–P8 / Mon–Fri</span>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:10px;">Darker = more absences</div>
+          <div id="heatmap-grid" class="heatmap-grid"></div>
+        </div>
       </div>
-      <div style="overflow-x:auto;">
-        <table id="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Date</th>
-              <th>P1 8am</th>
-              <th>P2 9am</th>
-              <th>P3 10am</th>
-              <th>P4 11am</th>
-              <th>P5 12pm</th>
-              <th>P6 1pm</th>
-              <th>P7 2pm</th>
-              <th>P8 3pm</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+
+      <!-- CONTROLS -->
+      <div class="controls-bar">
+        <span style="font-size:0.75rem;color:var(--text-muted);font-weight:600;">Filter:</span>
+        <select id="month-select" class="ctrl-select"></select>
+        <button class="btn-outline" onclick="loadSelectedMonth()">View Month</button>
+        <button class="btn-accent" onclick="searchFromDashboard()">Search</button>
       </div>
+
+      <!-- TABLE -->
+      <div class="data-table-wrap">
+        <div class="data-table-head">
+          <h3>Attendance Records</h3>
+          <span style="font-size:0.7rem;color:var(--text-muted);">Click column header to sort</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Date</th>
+                <th>P1 8am</th>
+                <th>P2 9am</th>
+                <th>P3 10am</th>
+                <th>P4 11am</th>
+                <th>P5 12pm</th>
+                <th>P6 1pm</th>
+                <th>P7 2pm</th>
+                <th>P8 3pm</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <section id="student-profile" class="card hidden" style="margin-top:16px;"></section>
     </div>
-
-    <!-- HIDDEN: student profile panel used by JS -->
-    <section id="student-profile" class="panel hidden" style="margin-bottom:24px;"></section>
-
   </main>
 
-  <!-- ── CHAT WIDGET ── -->
-  <button class="chat-toggle" id="chat-toggle-btn" onclick="toggleChat()">💬</button>
-  <div class="chat-window" id="admin-chat-widget">
-    <div class="chat-win-header">
-      <h4>🤖 AI Admin Assistant</h4>
-      <button onclick="toggleChat()">✕</button>
-    </div>
-    <div class="chat-win-msgs" id="chat-messages">
-      <div class="msg-bot">Hello Admin! Ask me about attendance data.<br><br>
-        Try: <em>"Who missed Period 3 today?"</em></div>
-    </div>
-    <div class="chat-win-input" id="chat-body">
-      <input type="text" id="chat-input" placeholder="Type your question…"
-        onkeypress="if(event.key==='Enter') sendAdminChat()">
-      <button onclick="sendAdminChat()">→</button>
+  <!-- CHAT -->
+  <button id="chat-toggle-btn" onclick="toggleChat()">💬</button>
+  <div id="admin-chat-widget">
+    <div class="chat-header" onclick="toggleChat()">🤖 AI Admin Assistant <span>▼</span></div>
+    <div class="chat-body">
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg ai">Hello Admin! Ask me anything.<br><em style="opacity:0.6">e.g. "Who missed Period 3
+            today?"</em></div>
+      </div>
+      <div class="chat-input-area">
+        <input id="chat-input" placeholder="Ask about attendance…" onkeypress="if(event.key==='Enter')sendAdminChat()">
+        <button onclick="sendAdminChat()">→</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // Toggle chat window (override for new layout)
-    function toggleChat() {
-      const w = document.getElementById('admin-chat-widget');
-      w.classList.toggle('open');
-    }
+    // Date in topbar
+    const d = new Date();
+    document.getElementById('topbar-date').textContent = d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
 
-    // Set sidebar user info from session
-    window.addEventListener('DOMContentLoaded', () => {
+    // User info from session
+    document.addEventListener('DOMContentLoaded', () => {
       const info = sessionStorage.getItem('userInfo');
-      if (info) {
-        try {
-          const u = JSON.parse(info);
-          const name = u.name || u.email || 'Admin';
-          const el = document.getElementById('sidebar-user-name');
-          const av = document.getElementById('user-avatar-initials');
-          if (el) el.textContent = name.split(' ')[0];
-          if (av) av.textContent = name.charAt(0).toUpperCase();
-        } catch (_) { }
-      }
+      if (info) { try { const u = JSON.parse(info); const n = u.name || u.email || 'Admin'; document.getElementById('user-nm').textContent = n.split(' ')[0]; document.getElementById('user-av').textContent = n[0].toUpperCase(); } catch (_) { } }
     });
+
+    function toggleChat() {
+      document.getElementById('admin-chat-widget').classList.toggle('open');
+    }
   </script>
   <script src="script.js" defer></script>
 </body>
