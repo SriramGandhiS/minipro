@@ -7,8 +7,7 @@
   <title>Smart Attendance | PSNACET</title>
   <meta name="description"
     content="PSNA College of Engineering & Technology — AI-powered Smart Attendance System. NAAC A++ Accredited.">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap"
     rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
@@ -21,12 +20,13 @@
     }
 
     :root {
-      --black: #050505;
-      --white: #f5f5f5;
-      --accent: #49d6ff;
-      --muted: #888;
-      --border: rgba(255, 255, 255, 0.1);
-      --font: 'Inter', 'Space Grotesk', sans-serif;
+      --black: #111;
+      --white: #fff;
+      --off-white: #f7f7f5;
+      --light-gray: #e8e8e6;
+      --mid-gray: #888;
+      --dark-section: #161616;
+      --font: 'Inter', 'Helvetica Neue', Arial, sans-serif;
     }
 
     html {
@@ -34,274 +34,244 @@
     }
 
     body {
-      background: var(--black);
-      color: var(--white);
       font-family: var(--font);
-      overflow-x: hidden;
-      cursor: none;
-    }
-
-    /* ── CURSOR ── */
-    #cursor {
-      position: fixed;
-      width: 10px;
-      height: 10px;
+      color: var(--black);
       background: var(--white);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.08s, width 0.2s, height 0.2s, background 0.2s;
-      mix-blend-mode: difference;
+      overflow-x: hidden;
     }
 
-    #cursor.big {
-      width: 42px;
-      height: 42px;
-      background: transparent;
-      border: 2px solid var(--white);
+    a {
+      text-decoration: none;
+      color: inherit;
     }
 
-    /* ── GRID BG ── */
-    #three-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
+    img {
+      display: block;
+      max-width: 100%;
     }
 
-    #three-bg::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 80px 80px;
-    }
-
-    #three-bg canvas {
-      position: absolute;
-      inset: 0;
-    }
-
-    /* ── NAV ── */
-    nav.topnav {
+    /* ─── NAVBAR ─── */
+    .navbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 100;
+      z-index: 200;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 22px 60px;
-      background: rgba(5, 5, 5, 0.7);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
+      padding: 0 56px;
+      height: 68px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--light-gray);
+      transition: background 0.3s;
+    }
+
+    .navbar.dark-mode {
+      background: rgba(17, 17, 17, 0.94);
+      border-bottom: 1px solid #222;
     }
 
     .nav-logo {
-      font-size: 1.1rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--white);
-      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .navbar.dark-mode .nav-logo {
+      color: #fff;
     }
 
     .nav-links {
       display: flex;
-      gap: 36px;
+      gap: 32px;
       list-style: none;
     }
 
     .nav-links a {
       font-size: 0.82rem;
       font-weight: 500;
-      letter-spacing: 0.5px;
-      color: var(--muted);
-      text-decoration: none;
-      text-transform: uppercase;
+      color: #444;
       transition: color 0.2s;
+      text-transform: capitalize;
     }
 
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--white);
-    }
-
-    .nav-cta {
-      background: var(--white);
+    .nav-links a:hover {
       color: var(--black);
-      padding: 10px 22px;
-      border-radius: 4px;
-      font-size: 0.8rem;
+    }
+
+    .navbar.dark-mode .nav-links a {
+      color: #aaa;
+    }
+
+    .navbar.dark-mode .nav-links a:hover {
+      color: #fff;
+    }
+
+    .nav-btn {
+      padding: 9px 22px;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 3px;
+      font-size: 0.78rem;
       font-weight: 700;
-      text-decoration: none;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      border: 1px solid transparent;
       transition: background 0.2s, color 0.2s;
     }
 
-    .nav-cta:hover {
-      background: var(--accent);
-      color: var(--black);
+    .nav-btn:hover {
+      background: #333;
     }
 
-    /* ── HERO ── */
+    .navbar.dark-mode .nav-btn {
+      background: #fff;
+      color: #111;
+    }
+
+    /* ─── HERO ─── */
     .hero {
+      position: relative;
+      width: 100%;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 0 60px 80px;
-      position: relative;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       overflow: hidden;
     }
 
-    .hero-bg {
+    .hero-bg-img {
       position: absolute;
       inset: 0;
       background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/PSNA_College.jpg/1200px-PSNA_College.jpg') center/cover no-repeat;
-      filter: brightness(0.18) grayscale(0.6);
-      transform: scale(1.05);
-      transition: transform 8s ease;
+      transition: transform 14s ease;
     }
 
-    .hero:hover .hero-bg {
-      transform: scale(1.1);
+    .hero-bg-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.6) 100%);
     }
 
-    .hero-eyebrow {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 3px;
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 140px 32px 80px;
+      max-width: 860px;
+    }
+
+    .hero-pre {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 20px;
+      color: #555;
+      margin-bottom: 28px;
     }
 
     .hero-title {
-      font-size: clamp(3.5rem, 8.5vw, 8rem);
-      font-weight: 900;
-      line-height: 0.95;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-      max-width: 900px;
-      position: relative;
-    }
-
-    .hero-title em {
-      font-style: normal;
-      color: transparent;
-      -webkit-text-stroke: 1.5px var(--white);
-    }
-
-    .hero-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-top: 48px;
-      flex-wrap: wrap;
-      gap: 24px;
-    }
-
-    .hero-desc {
-      max-width: 380px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-
-    .hero-desc strong {
-      color: var(--white);
-    }
-
-    .hero-cta-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--white);
-      color: var(--black);
-      padding: 14px 32px;
-      border: none;
-      border-radius: 4px;
-      font-size: 0.82rem;
+      font-size: clamp(2.8rem, 7vw, 6.5rem);
       font-weight: 700;
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+      color: var(--black);
+      margin-bottom: 22px;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: #444;
+      font-weight: 300;
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-filled {
+      padding: 13px 30px;
+      background: var(--black);
+      color: var(--white);
+      border-radius: 3px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      cursor: pointer;
-      text-decoration: none;
+      border: 1px solid var(--black);
       transition: background 0.2s, transform 0.15s;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .btn-primary:hover {
-      background: var(--accent);
+    .btn-filled:hover {
+      background: #333;
       transform: translateY(-2px);
     }
 
-    .btn-ghost {
+    .btn-outlined {
+      padding: 13px 30px;
       background: transparent;
-      color: var(--white);
-      padding: 14px 32px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 4px;
-      font-size: 0.82rem;
+      color: var(--black);
+      border-radius: 3px;
+      font-size: 0.8rem;
       font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s, transform 0.15s;
-      display: inline-block;
+      border: 1px solid var(--black);
+      transition: background 0.2s, transform 0.15s;
     }
 
-    .btn-ghost:hover {
-      border-color: var(--white);
-      color: var(--white);
+    .btn-outlined:hover {
+      background: rgba(0, 0, 0, 0.05);
       transform: translateY(-2px);
     }
 
-    /* ── TICKER ── */
-    .ticker-wrap {
-      background: var(--white);
-      color: var(--black);
-      padding: 14px 0;
+    /* ─── MARQUEE ─── */
+    .marquee-wrap {
+      background: var(--black);
+      color: var(--white);
+      padding: 13px 0;
       overflow: hidden;
     }
 
-    .ticker {
+    .marquee {
       display: flex;
-      gap: 0;
       white-space: nowrap;
-      animation: ticker 28s linear infinite;
+      animation: scroll-left 30s linear infinite;
     }
 
-    .ticker-item {
+    .marquee-item {
       display: inline-flex;
       align-items: center;
-      gap: 18px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
+      gap: 20px;
+      padding: 0 44px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 0 40px;
-      border-right: 1px solid rgba(0, 0, 0, 0.15);
+      border-right: 1px solid #333;
     }
 
-    .ticker-dot {
-      width: 6px;
-      height: 6px;
-      background: #111;
+    .marquee-dot {
+      width: 4px;
+      height: 4px;
+      background: #888;
       border-radius: 50%;
-      flex-shrink: 0;
     }
 
-    @keyframes ticker {
+    @keyframes scroll-left {
       from {
         transform: translateX(0);
       }
@@ -311,294 +281,382 @@
       }
     }
 
-    /* ── STATS ── */
-    .stats-section {
+    /* ─── NUMBERS ─── */
+    .numbers-section {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+      background: var(--white);
     }
 
-    .stat-block {
-      padding: 52px 44px;
-      border-right: 1px solid var(--border);
-      transition: background 0.3s;
+    .num-block {
+      padding: 64px 48px;
+      border-right: 1px solid var(--light-gray);
     }
 
-    .stat-block:last-child {
+    .num-block:last-child {
       border-right: none;
     }
 
-    .stat-block:hover {
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .stat-number {
-      font-size: clamp(2.8rem, 4vw, 4.2rem);
-      font-weight: 900;
-      letter-spacing: -2px;
-      color: var(--white);
+    .num-val {
+      font-size: clamp(2.6rem, 4vw, 4rem);
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      color: var(--black);
       line-height: 1;
       margin-bottom: 6px;
     }
 
-    .stat-number span {
-      color: var(--accent);
+    .num-line {
+      width: 40px;
+      height: 2px;
+      background: var(--black);
+      margin: 12px 0;
     }
 
-    .stat-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      letter-spacing: 1px;
+    .num-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
+      color: var(--mid-gray);
     }
 
-    /* ── SECTION COMMON ── */
-    section {
-      padding: 100px 60px;
-    }
-
-    .section-tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 18px;
-    }
-
-    .section-title {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      line-height: 1.05;
-      text-transform: uppercase;
-      margin-bottom: 40px;
-    }
-
-    .section-title em {
-      font-style: normal;
-      -webkit-text-stroke: 1px var(--white);
-      color: transparent;
-    }
-
-    /* ── ABOUT SPLIT ── */
-    .about-grid {
+    /* ─── ABOUT SPLIT ─── */
+    .split-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
     }
 
-    .about-img {
-      height: 520px;
+    .split-img {
+      min-height: 540px;
       background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/PSNA_College.jpg/1200px-PSNA_College.jpg') center/cover no-repeat;
-      filter: grayscale(0.5) brightness(0.8);
     }
 
-    .about-content {
-      padding: 60px 52px;
-      background: #0d0d0d;
+    .split-content {
+      background: var(--off-white);
+      padding: 80px 64px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    .about-content p {
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 1rem;
-      margin-bottom: 16px;
+    .split-content.dark {
+      background: var(--dark-section);
+      color: #fff;
     }
 
-    .about-content strong {
-      color: var(--white);
-    }
-
-    .about-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 28px;
-    }
-
-    .badge-pill {
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 6px 14px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 1px;
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--muted);
-      transition: border-color 0.2s, color 0.2s;
+      color: var(--mid-gray);
+      margin-bottom: 22px;
     }
 
-    .badge-pill:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+    .split-content.dark .section-label {
+      color: #666;
     }
 
-    /* ── FEATURES GRID ── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .feature-card {
-      background: var(--black);
-      padding: 48px 36px;
-      transition: background 0.3s;
-    }
-
-    .feature-card:hover {
-      background: #0e0e0e;
-    }
-
-    .feature-icon {
-      font-size: 2.2rem;
+    .section-h2 {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
       margin-bottom: 20px;
     }
 
-    .feature-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 12px;
-      color: var(--white);
+    .section-p {
+      font-size: 0.92rem;
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 14px;
     }
 
-    .feature-desc {
-      color: var(--muted);
-      font-size: 0.88rem;
+    .split-content.dark .section-p {
+      color: #999;
+    }
+
+    .split-content.dark .section-h2 {
+      color: #fff;
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--mid-gray);
+      padding-bottom: 2px;
+      color: var(--black);
+      margin-top: 12px;
+      transition: gap 0.2s;
+    }
+
+    .read-more:hover {
+      gap: 14px;
+    }
+
+    .split-content.dark .read-more {
+      color: #fff;
+      border-bottom-color: #444;
+    }
+
+    /* ─── DARK INFO SECTION ─── */
+    .dark-section {
+      background: var(--dark-section);
+      color: #fff;
+      padding: 100px 64px;
+    }
+
+    .dark-section .section-label {
+      color: #555;
+    }
+
+    .dark-section .section-h2 {
+      color: #fff;
+    }
+
+    /* ─── FEATURES STRIP ─── */
+    .features-strip {
+      background: var(--off-white);
+      padding: 80px 56px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--light-gray);
+      margin-top: 52px;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .feat-card {
+      padding: 44px 36px;
+      border-right: 1px solid var(--light-gray);
+      background: #fff;
+      transition: background 0.25s;
+    }
+
+    .feat-card:last-child {
+      border-right: none;
+    }
+
+    .feat-card:hover {
+      background: var(--off-white);
+    }
+
+    .feat-num {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--mid-gray);
+      letter-spacing: 0.1em;
+      margin-bottom: 22px;
+    }
+
+    .feat-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .feat-desc {
+      font-size: 0.84rem;
+      color: #666;
       line-height: 1.7;
     }
 
-    /* ── PLACEMENTS ── */
-    .placement-row {
+    /* ─── PLACEMENT DARK ─── */
+    .placement-dark {
+      background: var(--dark-section);
+      padding: 100px 56px;
       display: grid;
-      grid-template-columns: 0.85fr 1fr;
-      gap: 60px;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
       align-items: center;
     }
 
-    .placement-numbers {
+    .placement-dark .section-h2 {
+      color: #fff;
+    }
+
+    .placement-dark .section-label {
+      color: #555;
+    }
+
+    .placement-dark .section-p {
+      color: #888;
+    }
+
+    .pnums-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
+      gap: 0;
     }
 
-    .pnum {
-      background: #0a0a0a;
-      padding: 36px 28px;
-      transition: background 0.3s;
-    }
-
-    .pnum:hover {
-      background: #111;
+    .pnum-item {
+      padding: 32px 0;
+      border-bottom: 1px solid #222;
     }
 
     .pnum-val {
-      font-size: 2.4rem;
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      color: var(--white);
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      color: #fff;
+      margin-bottom: 4px;
     }
 
-    .pnum-val span {
-      color: var(--accent);
+    .pnum-line {
+      width: 32px;
+      height: 1.5px;
+      background: #555;
+      margin: 8px 0;
     }
 
-    .pnum-label {
-      font-size: 0.7rem;
-      color: var(--muted);
-      letter-spacing: 1px;
+    .pnum-lbl {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      margin-top: 4px;
+      color: #555;
     }
 
-    .companies-row {
+    .companies-list {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 9px;
       margin-top: 28px;
     }
 
-    .co-tag {
-      border: 1px solid var(--border);
+    .co-chip {
+      border: 1px solid #2a2a2a;
       border-radius: 2px;
       padding: 5px 14px;
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.72rem;
+      color: #888;
       font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
       transition: border-color 0.2s, color 0.2s;
     }
 
-    .co-tag:hover {
-      border-color: var(--white);
-      color: var(--white);
+    .co-chip:hover {
+      border-color: #fff;
+      color: #fff;
     }
 
-    /* ── AUTH SECTION ── */
-    .auth-section {
-      background: #080808;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 100px 60px;
+    /* ─── DEPARTMENTS ─── */
+    .dept-section {
+      padding: 80px 56px;
+      background: var(--white);
     }
 
-    .auth-inner {
-      max-width: 600px;
-      margin: 0 auto;
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid var(--light-gray);
+      margin-top: 48px;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .dept-card {
+      padding: 36px 20px;
       text-align: center;
+      border-right: 1px solid var(--light-gray);
+      transition: background 0.2s;
     }
 
-    .auth-inner h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      font-weight: 900;
-      letter-spacing: -1.5px;
+    .dept-card:last-child {
+      border-right: none;
+    }
+
+    .dept-card:hover {
+      background: var(--off-white);
+    }
+
+    .dept-icon {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .dept-name {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--mid-gray);
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      margin-bottom: 16px;
     }
 
-    .auth-inner p {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.7;
-      margin-bottom: 36px;
+    /* ─── AUTH ─── */
+    .auth-section {
+      background: var(--off-white);
+      padding: 100px 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
     }
 
-    .auth-inner p strong {
-      color: var(--accent);
+    .auth-left .section-h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      margin-bottom: 14px;
+    }
+
+    .auth-left p {
+      font-size: 0.92rem;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .auth-left p strong {
+      color: var(--black);
+    }
+
+    .auth-card {
+      background: #fff;
+      border: 1px solid var(--light-gray);
+      border-radius: 6px;
+      padding: 44px 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    }
+
+    .auth-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      font-size: 0.82rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 28px;
     }
 
     .g-btn-wrap {
       display: flex;
       justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .divider-or {
       display: flex;
       align-items: center;
-      gap: 14px;
-      color: #333;
-      font-size: 0.72rem;
-      margin: 18px 0;
+      gap: 12px;
+      color: #ccc;
+      font-size: 0.7rem;
+      margin: 14px 0;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 0.1em;
     }
 
     .divider-or::before,
@@ -606,372 +664,350 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--border);
+      background: var(--light-gray);
     }
 
     .admin-btn {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--muted);
-      font-size: 0.85rem;
+      border: 1px solid var(--light-gray);
+      border-radius: 3px;
+      color: #333;
+      font-size: 0.78rem;
       font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      letter-spacing: 1px;
       cursor: pointer;
       font-family: var(--font);
-      transition: border-color 0.25s, color 0.25s, background 0.25s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .admin-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(73, 214, 255, 0.05);
+      border-color: var(--black);
+      background: #f5f5f5;
     }
 
-    /* ── DEPARTMENTS ── */
-    .dept-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .dept-card {
-      background: var(--black);
-      padding: 32px 20px;
-      text-align: center;
-      transition: background 0.3s;
-    }
-
-    .dept-card:hover {
-      background: #0e0e0e;
-    }
-
-    .dept-icon {
-      font-size: 1.6rem;
-      margin-bottom: 10px;
-    }
-
-    .dept-name {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    /* ── FOOTER ── */
+    /* ─── FOOTER ─── */
     footer {
-      padding: 60px 60px 40px;
-      border-top: 1px solid var(--border);
+      background: var(--black);
+      color: #fff;
+      padding: 64px 56px 36px;
     }
 
     .footer-top {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 48px;
+      gap: 40px;
       flex-wrap: wrap;
-      gap: 32px;
-    }
-
-    .footer-brand {
-      max-width: 320px;
+      margin-bottom: 48px;
     }
 
     .footer-brand h3 {
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      margin-bottom: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
 
     .footer-brand p {
-      color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
+      color: #666;
       line-height: 1.7;
+      max-width: 280px;
     }
 
-    .footer-links-col h4 {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 2px;
+    .footer-col h4 {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: #555;
       margin-bottom: 16px;
     }
 
-    .footer-links-col a {
+    .footer-col a {
       display: block;
-      color: #555;
-      font-size: 0.85rem;
-      text-decoration: none;
+      color: #888;
+      font-size: 0.82rem;
       margin-bottom: 10px;
       transition: color 0.2s;
     }
 
-    .footer-links-col a:hover {
-      color: var(--white);
+    .footer-col a:hover {
+      color: #fff;
     }
 
     .footer-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 28px;
-      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      border-top: 1px solid #1e1e1e;
       flex-wrap: wrap;
       gap: 12px;
     }
 
     .footer-bottom span {
-      font-size: 0.75rem;
-      color: #333;
+      font-size: 0.72rem;
+      color: #444;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      nav.topnav {
-        padding: 18px 24px;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .hero {
-        padding: 0 24px 60px;
-      }
-
-      .hero-title {
-        letter-spacing: -1.5px;
-      }
-
-      section {
-        padding: 60px 24px;
-      }
-
-      .stats-section {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .stat-block {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 36px 24px;
-      }
-
-      .about-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .about-img {
-        height: 260px;
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .placement-row {
-        grid-template-columns: 1fr;
-      }
-
-      .dept-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      footer {
-        padding: 40px 24px 24px;
-      }
-
-      .footer-top {
-        flex-direction: column;
-      }
-
-      #cursor {
-        display: none;
-      }
-
-      body {
-        cursor: auto;
-      }
-    }
-
-    /* ── SCROLL ANIMATION ── */
+    /* ─── REVEAL ANIMATIONS ─── */
     .reveal {
       opacity: 0;
-      transform: translateY(36px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
 
     .reveal.visible {
       opacity: 1;
       transform: none;
     }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 860px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-content {
+        padding: 120px 20px 60px;
+      }
+
+      .numbers-section {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .num-block {
+        border-right: none;
+        border-bottom: 1px solid var(--light-gray);
+        padding: 40px 24px;
+      }
+
+      .split-section {
+        grid-template-columns: 1fr;
+      }
+
+      .split-img {
+        min-height: 260px;
+      }
+
+      .split-content {
+        padding: 52px 28px;
+      }
+
+      .features-strip {
+        padding: 60px 24px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feat-card {
+        border-right: none;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .placement-dark {
+        grid-template-columns: 1fr;
+        padding: 60px 24px;
+        gap: 40px;
+      }
+
+      .dept-section {
+        padding: 60px 24px;
+      }
+
+      .dept-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .auth-section {
+        grid-template-columns: 1fr;
+        padding: 60px 24px;
+      }
+
+      footer {
+        padding: 48px 24px 28px;
+      }
+
+      .footer-top {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 
 <body data-page="home">
-  <div id="three-bg"></div>
-  <div id="cursor"></div>
 
-  <!-- ── NAVIGATION ── -->
-  <nav class="topnav">
-    <a class="nav-logo" href="index.html">SmartAttendance ·</a>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="register.html">Registration</a></li>
-      <li><a href="dashboard.html">Dashboard</a></li>
-      <li><a href="attendance.html">Attendance</a></li>
-      <li><a href="profile.html">Student Profile</a></li>
-      <li><a href="#" onclick="logout(); return false;">Logout</a></li>
-    </ul>
-    <a href="#auth" class="nav-cta">Access System</a>
-  </nav>
+  <!-- ─── NAVBAR ─── -->
+  <header class="navbar" id="navbar">
+    <span class="nav-logo">SmartAttendance</span>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="register.html">Registration</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="attendance.html">Attendance</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="#" onclick="logout();return false;">Logout</a></li>
+      </ul>
+    </nav>
+    <a href="#auth" class="nav-btn">Access System</a>
+  </header>
 
-  <!-- ── HERO ── -->
+  <!-- ─── HERO ─── -->
   <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-eyebrow">PSNACET · Dindigul · Est. 1986 · NAAC A++</div>
-    <h1 class="hero-title">Smart<br><em>Attendance</em><br>System</h1>
-    <div class="hero-bottom">
-      <p class="hero-desc">
-        <strong>AI-powered face recognition</strong> for PSNA College of Engineering & Technology. 8-period tracking,
-        real-time dashboards, zero paperwork.
-      </p>
-      <div class="hero-cta-group">
-        <a href="#auth" class="btn-primary">Access System</a>
-        <a href="dashboard.html" class="btn-ghost">View Dashboard</a>
+    <div class="hero-bg-img" id="hero-parallax"></div>
+    <div class="hero-content">
+      <p class="hero-pre">PSNACET &nbsp;·&nbsp; Dindigul, Tamil Nadu &nbsp;·&nbsp; Est. 1986 &nbsp;·&nbsp; NAAC A++</p>
+      <h1 class="hero-title">The Future of<br>Attendance<br>Is Here</h1>
+      <p class="hero-sub">AI-powered face recognition attendance for PSNA College of Engineering & Technology.
+        Automated, accurate, and real-time.</p>
+      <div class="hero-actions">
+        <a href="#auth" class="btn-filled">Access System &nbsp;→</a>
+        <a href="dashboard.html" class="btn-outlined">View Dashboard</a>
       </div>
     </div>
   </section>
 
-  <!-- ── TICKER ── -->
-  <div class="ticker-wrap">
-    <div class="ticker">
-      <span class="ticker-item"><span class="ticker-dot"></span>NAAC A++ ACCREDITED</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>CGPA 3.65</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>30,000+ ALUMNI</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>4,800+ STUDENTS</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>44L HIGHEST PACKAGE</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>379 FACULTY</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>AI FACE RECOGNITION</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>8-PERIOD TRACKING</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>NAAC A++ ACCREDITED</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>CGPA 3.65</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>30,000+ ALUMNI</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>4,800+ STUDENTS</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>44L HIGHEST PACKAGE</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>379 FACULTY</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>AI FACE RECOGNITION</span>
-      <span class="ticker-item"><span class="ticker-dot"></span>8-PERIOD TRACKING</span>
+  <!-- ─── MARQUEE ─── -->
+  <div class="marquee-wrap">
+    <div class="marquee">
+      <span class="marquee-item"><span class="marquee-dot"></span>NAAC A++ ACCREDITED</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>CGPA 3.65</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>30,000+ ALUMNI</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>44L HIGHEST PACKAGE</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>AI FACE RECOGNITION</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>8-PERIOD TRACKER</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>REAL-TIME DASHBOARD</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>379 FACULTY</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>NAAC A++ ACCREDITED</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>CGPA 3.65</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>30,000+ ALUMNI</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>44L HIGHEST PACKAGE</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>AI FACE RECOGNITION</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>8-PERIOD TRACKER</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>REAL-TIME DASHBOARD</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>379 FACULTY</span>
     </div>
   </div>
 
-  <!-- ── STATS ── -->
-  <div class="stats-section reveal">
-    <div class="stat-block">
-      <div class="stat-number">30<span>K+</span></div>
-      <div class="stat-label">Alumni Network</div>
+  <!-- ─── NUMBERS ─── -->
+  <div class="numbers-section reveal">
+    <div class="num-block">
+      <div class="num-val">30,000+</div>
+      <div class="num-line"></div>
+      <div class="num-label">Alumni Network</div>
     </div>
-    <div class="stat-block">
-      <div class="stat-number">A<span>++</span></div>
-      <div class="stat-label">NAAC Grade</div>
+    <div class="num-block">
+      <div class="num-val">A++</div>
+      <div class="num-line"></div>
+      <div class="num-label">NAAC Grade</div>
     </div>
-    <div class="stat-block">
-      <div class="stat-number">44<span>L</span></div>
-      <div class="stat-label">Highest Package</div>
+    <div class="num-block">
+      <div class="num-val">₹44L</div>
+      <div class="num-line"></div>
+      <div class="num-label">Highest Package</div>
     </div>
-    <div class="stat-block">
-      <div class="stat-number">379</div>
-      <div class="stat-label">Expert Faculty</div>
+    <div class="num-block">
+      <div class="num-val">4,800+</div>
+      <div class="num-line"></div>
+      <div class="num-label">Students Enrolled</div>
     </div>
   </div>
 
-  <!-- ── ABOUT ── -->
-  <section class="reveal">
-    <p class="section-tag">About the Institution</p>
-    <h2 class="section-title">PSNA College of<br><em>Engineering</em> & Tech</h2>
-    <div class="about-grid">
-      <div class="about-img"></div>
-      <div class="about-content">
-        <p>Established in 1986, <strong>PSNA College of Engineering and Technology</strong> is one of Tamil Nadu's most
-          prestigious engineering institutions, located in Dindigul.</p>
-        <p>Accredited <strong>NAAC A++</strong> with a CGPA of 3.65, the institution offers world-class education across
-          19+ programmes in engineering, technology, science, and management.</p>
-        <p>With <strong>30,000+ alumni</strong>, cutting-edge research facilities, 172+ labs, and industry partnerships
-          with top global companies, PSNACET is the launchpad for tomorrow's innovators.</p>
-        <div class="about-badges">
-          <span class="badge-pill">NAAC A++</span>
-          <span class="badge-pill">NBA Accredited</span>
-          <span class="badge-pill">AICTE Approved</span>
-          <span class="badge-pill">3500+ Publications</span>
-          <span class="badge-pill">60+ Patents</span>
-          <span class="badge-pill">20+ CoEs</span>
-        </div>
-      </div>
+  <!-- ─── ABOUT SPLIT (light) ─── -->
+  <div class="split-section reveal">
+    <div class="split-img"></div>
+    <div class="split-content">
+      <p class="section-label">About the Institution</p>
+      <h2 class="section-h2">PSNA College of Engineering & Technology</h2>
+      <p class="section-p">Established in 1986, PSNACET is one of Tamil Nadu's most respected engineering institutions.
+        Accredited <strong>NAAC A++ (CGPA 3.65)</strong>, offering 19+ programmes across engineering, technology,
+        science, and management.</p>
+      <p class="section-p">With 172+ labs, 379 expert faculty, and partnerships with global industry leaders, PSNACET
+        consistently produces graduates that shape the future.</p>
+      <a href="https://www.psnacet.edu.in" target="_blank" class="read-more">Visit Official Website &nbsp;→</a>
     </div>
-  </section>
+  </div>
 
-  <!-- ── SYSTEM FEATURES ── -->
-  <section style="background: #060606;" class="reveal">
-    <p class="section-tag">The System</p>
-    <h2 class="section-title">What Smart<br><em>Attendance</em> Does</h2>
+  <!-- ─── ABOUT SPLIT (dark, reversed) ─── -->
+  <div class="split-section reveal" style="direction: rtl;">
+    <div class="split-img"
+      style="background-image: url('https://www.psnacet.edu.in/wp-content/uploads/2024/05/MG_0043_11zon.webp'); direction: ltr;">
+    </div>
+    <div class="split-content dark" style="direction: ltr;">
+      <p class="section-label">Research & Innovation</p>
+      <h2 class="section-h2">3,500+ Publications. 60+ Patents.</h2>
+      <p class="section-p">PSNACET is a hub of research excellence — with over ₹110L in funded projects, 20+ Centres of
+        Excellence, and a legacy of innovation that spans robotics, AI, IoT, and data science.</p>
+      <p class="section-p">Our Smart India Hackathon 2025 participants and CII Award winners show what PSNACET students
+        can achieve.</p>
+      <a href="https://www.psnacet.edu.in/research/" target="_blank" class="read-more">Explore Research &nbsp;→</a>
+    </div>
+  </div>
+
+  <!-- ─── SYSTEM FEATURES ─── -->
+  <div class="features-strip reveal">
+    <p class="section-label">The System</p>
+    <h2 class="section-h2" style="font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -0.03em; line-height: 1.1;">
+      What Smart Attendance Does</h2>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🤖</div>
-        <div class="feature-title">AI Face Recognition</div>
-        <div class="feature-desc">Automatically identifies and logs students using advanced computer vision — no manual
-          input, no errors.</div>
+      <div class="feat-card">
+        <div class="feat-num">01</div>
+        <div class="feat-title">AI Face Recognition</div>
+        <div class="feat-desc">Identifies students automatically using computer vision. No manual roll calls, no errors,
+          no paperwork.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">⏱️</div>
-        <div class="feature-title">8-Period Tracker</div>
-        <div class="feature-desc">Tracks attendance for all 8 daily periods. Each period auto-detects based on real-time
+      <div class="feat-card">
+        <div class="feat-num">02</div>
+        <div class="feat-title">8-Period Tracker</div>
+        <div class="feat-desc">Tracks all 8 daily periods independently. Period slots auto-detected from real-time
           clock.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <div class="feature-title">Live Dashboard</div>
-        <div class="feature-desc">Real-time analytics, heatmaps, occupancy stats, and period-wise attendance tables for
-          the admin.</div>
+      <div class="feat-card">
+        <div class="feat-num">03</div>
+        <div class="feat-title">Live Dashboard</div>
+        <div class="feat-desc">Real-time analytics, heatmaps, occupancy rates, and a searchable student attendance table
+          for admin.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔐</div>
-        <div class="feature-title">Secure Access</div>
-        <div class="feature-desc">Google OAuth limited to @psnacet.edu.in accounts. JWT-secured API. Admin bypass for
-          staff.</div>
+      <div class="feat-card">
+        <div class="feat-num">04</div>
+        <div class="feat-title">Secure Access</div>
+        <div class="feat-desc">Google OAuth restricted to @psnacet.edu.in accounts. JWT-secured API. Admin staff bypass
+          with credentials.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <div class="feature-title">Mobile Ready</div>
-        <div class="feature-desc">Fully responsive interface — works on desktop, tablet, and mobile for maximum
-          flexibility.</div>
+      <div class="feat-card">
+        <div class="feat-num">05</div>
+        <div class="feat-title">AI Chat Assistant</div>
+        <div class="feat-desc">Ask the chatbot "Who missed Period 3 today?" and get instant, data-driven answers from
+          the system.</div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <div class="feature-title">AI Chat Assistant</div>
-        <div class="feature-desc">Ask the admin chatbot "Who missed Period 3?" and get instant, data-driven answers.
+      <div class="feat-card">
+        <div class="feat-num">06</div>
+        <div class="feat-title">Mobile Ready</div>
+        <div class="feat-desc">Fully responsive — works on any smartphone, tablet, or desktop. No app install required.
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ── DEPARTMENTS ── -->
-  <section class="reveal">
-    <p class="section-tag">Academics</p>
-    <h2 class="section-title">19+ <em>Programmes</em></h2>
+  <!-- ─── DEPARTMENTS ─── -->
+  <div class="dept-section reveal">
+    <p class="section-label">Academics</p>
+    <h2 class="section-h2" style="font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -0.03em;">19+ Programmes</h2>
     <div class="dept-grid">
       <div class="dept-card">
         <div class="dept-icon">💻</div>
@@ -1014,80 +1050,89 @@
         <div class="dept-name">Science & Hum.</div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ── PLACEMENTS ── -->
-  <section style="background: #060606;" class="reveal">
-    <p class="section-tag">Career Outcomes</p>
-    <h2 class="section-title">Record <em>Placements</em></h2>
-    <div class="placement-row">
-      <div class="placement-numbers">
-        <div class="pnum">
-          <div class="pnum-val">₹44<span>L</span></div>
-          <div class="pnum-label">Highest Package</div>
-        </div>
-        <div class="pnum">
-          <div class="pnum-val">₹4<span>.03L</span></div>
-          <div class="pnum-label">Average Package</div>
-        </div>
-        <div class="pnum">
-          <div class="pnum-val">1<span>K+</span></div>
-          <div class="pnum-label">Students Placed</div>
-        </div>
-        <div class="pnum">
-          <div class="pnum-val">125<span>+</span></div>
-          <div class="pnum-label">Recruiters</div>
-        </div>
-      </div>
-      <div>
-        <p style="color: var(--muted); line-height: 1.8; font-size: 0.95rem; margin-bottom: 20px;">PSNACET graduates are
-          sought by India's leading MNCs, core engineering firms, and global tech companies — a testament to 38+ years
-          of academic excellence.</p>
-        <div class="companies-row">
-          <span class="co-tag">TCS</span><span class="co-tag">Infosys</span>
-          <span class="co-tag">Wipro</span><span class="co-tag">HCL</span>
-          <span class="co-tag">Cognizant</span><span class="co-tag">Zoho</span>
-          <span class="co-tag">L&T</span><span class="co-tag">BHEL</span>
-          <span class="co-tag">Amazon</span><span class="co-tag">Capgemini</span>
-          <span class="co-tag">Accenture</span><span class="co-tag">IBM</span>
-        </div>
+  <!-- ─── PLACEMENTS ─── -->
+  <div class="placement-dark reveal">
+    <div>
+      <p class="section-label">Career Outcomes</p>
+      <h2 class="section-h2"
+        style="color:#fff; font-size: clamp(1.8rem,3vw,2.6rem); letter-spacing:-0.03em; margin-bottom: 16px;">Record
+        Placements</h2>
+      <p class="section-p" style="color:#888; font-size:0.92rem; line-height:1.8; margin-bottom:20px;">PSNACET graduates
+        are sought by India's leading MNCs, top tech companies, and global engineering firms — built on 38 years of
+        industry-aligned education.</p>
+      <div class="companies-list">
+        <span class="co-chip">TCS</span><span class="co-chip">Infosys</span>
+        <span class="co-chip">Wipro</span><span class="co-chip">HCL</span>
+        <span class="co-chip">Cognizant</span><span class="co-chip">Zoho</span>
+        <span class="co-chip">L&T</span><span class="co-chip">BHEL</span>
+        <span class="co-chip">Amazon</span><span class="co-chip">Accenture</span>
+        <span class="co-chip">IBM</span><span class="co-chip">Capgemini</span>
       </div>
     </div>
-  </section>
+    <div class="pnums-grid">
+      <div class="pnum-item" style="border-right: 1px solid #222; padding-right: 32px;">
+        <div class="pnum-val">₹44L</div>
+        <div class="pnum-line"></div>
+        <div class="pnum-lbl">Highest Package</div>
+      </div>
+      <div class="pnum-item" style="padding-left: 32px;">
+        <div class="pnum-val">₹4.03L</div>
+        <div class="pnum-line"></div>
+        <div class="pnum-lbl">Average Package</div>
+      </div>
+      <div class="pnum-item" style="border-right: 1px solid #222; padding-right: 32px;">
+        <div class="pnum-val">1,000+</div>
+        <div class="pnum-line"></div>
+        <div class="pnum-lbl">Students Placed</div>
+      </div>
+      <div class="pnum-item" style="padding-left: 32px;">
+        <div class="pnum-val">125+</div>
+        <div class="pnum-line"></div>
+        <div class="pnum-lbl">Recruiters</div>
+      </div>
+    </div>
+  </div>
 
-  <!-- ── AUTH ── -->
+  <!-- ─── AUTH ─── -->
   <div class="auth-section reveal" id="auth">
-    <div class="auth-inner">
-      <h2>Access the System</h2>
-      <p>Sign in with your official <strong>@psnacet.edu.in</strong> Google account to access the Smart Attendance
-        system. Staff can use the Admin login below.</p>
+    <div class="auth-left">
+      <p class="section-label">System Access</p>
+      <h2 class="section-h2">Sign In to Smart Attendance</h2>
+      <p>This system is exclusively for PSNACET faculty and students. Use your official <strong>@psnacet.edu.in</strong>
+        Google account to log in. Staff members can use the Admin login below.</p>
+    </div>
+    <div class="auth-card">
+      <h3>Access the System</h3>
+      <p>Sign in with your institutional Google account or use Admin credentials for staff access.</p>
 
       <div id="g_id_onload" data-client_id="306791224176-emtle6k75ce3uk0m5o08ia0hcdihlovl.apps.googleusercontent.com"
         data-context="signin" data-ux_mode="popup" data-callback="handleGoogleLogin" data-auto_prompt="false">
       </div>
       <div class="g-btn-wrap">
-        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with"
-          data-size="large" data-logo_alignment="left">
+        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+          data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="300">
         </div>
       </div>
 
       <div class="divider-or">or</div>
 
       <button class="admin-btn" onclick="window.location.href='admin.html'">
-        🛡️ &nbsp; Admin Login — Staff Only
+        Staff Admin Login &nbsp;→
       </button>
     </div>
   </div>
 
-  <!-- ── FOOTER ── -->
+  <!-- ─── FOOTER ─── -->
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
         <h3>SmartAttendance · PSNACET</h3>
-        <p>AI-powered attendance tracking for PSNA College of Engineering & Technology, Dindigul, Tamil Nadu — NAAC A++
-          Accredited since 1986.</p>
+        <p>AI-powered attendance for PSNA College of Engineering & Technology, Dindigul — NAAC A++ Accredited since
+          1986.</p>
       </div>
-      <div class="footer-links-col">
+      <div class="footer-col">
         <h4>System</h4>
         <a href="dashboard.html">Dashboard</a>
         <a href="attendance.html">Take Attendance</a>
@@ -1095,10 +1140,9 @@
         <a href="profile.html">Student Profile</a>
         <a href="admin.html">Admin Login</a>
       </div>
-      <div class="footer-links-col">
-        <h4>College</h4>
-        <a href="https://www.psnacet.edu.in/" target="_blank">Official Website</a>
-        <a href="https://www.psnacet.edu.in/about-us/" target="_blank">About</a>
+      <div class="footer-col">
+        <h4>Institution</h4>
+        <a href="https://www.psnacet.edu.in/" target="_blank">psnacet.edu.in</a>
         <a href="https://www.psnacet.edu.in/placements/" target="_blank">Placements</a>
         <a href="https://www.psnacet.edu.in/research/" target="_blank">Research</a>
         <a href="https://www.psnacet.edu.in/contact-us/" target="_blank">Contact</a>
@@ -1106,27 +1150,34 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Smart Attendance System · PSNACET · All rights reserved</span>
-      <span>Developed by Sriram S · Tanush R · Selwin B · Solairajan S</span>
+      <span>Sriram S · Tanush R · Selwin B · Solairajan S</span>
     </div>
   </footer>
 
-  <script src="script.js" defer></script>
+  <!-- No heavy CDN - tiny inline helpers only -->
   <script>
-    // Reveal on scroll
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-    }, { threshold: 0.1 });
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.08 }
+    );
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Cursor
-    const cur = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cur.style.left = e.clientX + 'px';
-      cur.style.top = e.clientY + 'px';
-      const t = e.target;
-      cur.classList.toggle('big', !!(t.tagName === 'A' || t.tagName === 'BUTTON' || t.closest('a') || t.closest('button')));
-    });
+    // Navbar: switch to dark when hero ends
+    const navbar = document.getElementById('navbar');
+    const heroEl = document.querySelector('.hero');
+    const io = new IntersectionObserver(([e]) => {
+      navbar.classList.toggle('dark-mode', !e.isIntersecting);
+    }, { threshold: 0.2 });
+    io.observe(heroEl);
+
+    // Subtle hero parallax
+    window.addEventListener('scroll', () => {
+      const el = document.getElementById('hero-parallax');
+      if (el) el.style.transform = `translateY(${window.scrollY * 0.25}px)`;
+    }, { passive: true });
   </script>
+  <script src="script.js" defer></script>
 </body>
 
 </html>
