@@ -14,7 +14,22 @@ import re
 frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
 app = Flask(__name__, static_folder=frontend_dir, static_url_path="/")
 app.config['SECRET_KEY'] = 'smart_attendance_secret_key'
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}, r"/*": {"origins": "*"}})
+
+@app.before_request
+def before_request():
+    return None
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    return jsonify({'status': 'error', 'message': str(e)}), 500
 
 def token_required(f):
     @wraps(f)
@@ -239,30 +254,31 @@ def attendance():
 
 @app.route("/api/login", methods=["POST"])
 def api_login():
-    data = request.json
-    role = data.get("role")
-    password = data.get("password")
-    name = data.get("name")
+    try:
+        data = request.json
+        role = data.get("role")
+        password = data.get("password")
+        name = data.get("name")
 
-    if role == "admin":
-        if password == ADMIN_PASSWORD:
-            token = jwt.encode({'user': 'admin', 'role': 'admin'}, app.config['SECRET_KEY'], algorithm="HS256")
-            return jsonify({'status': 'success', 'token': token, 'role': 'admin'})
-        return jsonify({'status': 'error', 'message': 'Invalid admin password'}), 401
-    
-    elif role == "student":
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        c.execute("SELECT 1 FROM students WHERE lower(name)=lower(?)", (name,))
-        exists = c.fetchone()
+        if role == "admin":
+            if password == ADMIN_PASSWORD:
+                token = jwt.encode({'user': 'admin', 'role': 'admin'}, app.config['SECRET_KEY'], algorithm="HS256")
+                return jsonify({'status': 'success', 'token': token, 'role': 'admin'})
+            return jsonify({'status': 'error', 'message': 'Invalid admin password'}), 401
         
-        c.execute("SELECT 1 FROM attendance WHERE lower(name)=lower(?) LIMIT 1", (name,))
-        attendance_exists = c.fetchone()
-        conn.close()
-        
-        if exists or attendance_exists or name in known_encodings or name:
-            token = jwt.encode({'user': name, 'role': 'student'}, app.config['SECRET_KEY'], algorithm="HS256")
-            return jsonify({'status': 'success', 'token': token, 'role': 'student'})
+        elif role == "student":
+            conn = sqlite3.connect(DB_FILE)
+            c = conn.cursor()
+            c.execute("SELECT 1 FROM students WHERE lower(name)=lower(?)", (name,))
+            exists = c.fetchone()
+            
+            c.execute("SELECT 1 FROM attendance WHERE lower(name)=lower(?) LIMIT 1", (name,))
+            attendance_exists = c.fetchone()
+            conn.close()
+            
+            if exists or attendance_exists or name in known_encodings or name:
+                token = jwt.encode({'user': name, 'role': 'student'}, app.config['SECRET_KEY'], algorithm="HS256")
+                return jsonify({'status': 'success', 'token': token, 'role': 'student'})
         return jsonify({'status': 'error', 'message': 'Student not found in registry'}), 404
         
     return jsonify({'status': 'error', 'message': 'Invalid role'}), 400
