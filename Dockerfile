@@ -22,8 +22,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 COPY frontend/ ../frontend/
 
-# Expose port
-EXPOSE 5000
-
 # Run the application
-CMD sh -c "gunicorn -w 1 -b 0.0.0.0:${PORT:-5000} --max-requests 1000 --max-requests-jitter 100 --timeout 60 app:app"
+CMD sh -c "gunicorn -w 1 -b 0.0.0.0:${PORT:-10000} --max-requests 1000 --max-requests-jitter 100 --timeout 60 app:app"
