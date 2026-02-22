@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Login - Sriram.dev</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=6">
+</head>
+
+<body class="admin-body">
+    <div id="three-bg"></div>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <!-- 3D Animated Watermark -->
+    <div class="floating-watermark">SRIRAM.DEV</div>
+
+    <header class="site-header">
+        <div class="logo">SmartAttendance <span style="color:#6ee7b7; font-size:14px; margin-left:8px;">Admin</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html">Home</a>
+            <a href="admin.html" class="active">Admin Login</a>
+        </nav>
+    </header>
+
+    <main class="center-card">
+        <div class="card admin-card">
+            <div class="admin-3d-character" id="admin-eye">
+                <div class="eye-outer">
+                    <div class="eye-inner">
+                        <div class="pupil" id="pupil"></div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Admin Access</h2>
+            <p style="text-align:center; color:var(--muted); margin-top:-20px; margin-bottom: 24px;">Restricted to
+                Sriram.dev</p>
+
+            <div id="admin-login-form">
+                <label class="field">Username
+                    <input type="text" id="admin-user" placeholder="Enter username" autocomplete="username">
+                </label>
+
+                <label class="field">Password
+                    <input type="password" id="admin-pass" placeholder="Enter password" autocomplete="current-password">
+                </label>
+
+                <button type="button" class="btn primary" id="admin-login-btn" onclick="loginAdmin(event)"
+                    style="width: 100%; margin-top: 16px;">Authenticate</button>
+            </div>
+
+            <pre id="output" class="output"></pre>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <span>© 2026 Smart Attendance | Sriram.dev</span>
+        <div class="team-watermark">Developed by: SRIRAM S | TANUSH R | SELWIN B | SOLAIRAJAN S</div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="script.js?v=8"></script>
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Smart Attendance | Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-page="dashboard">
+  <div id="three-bg"></div>
+  <div class="custom-cursor" id="cursor"></div>
+
+  <header class="site-header">
+    <div class="logo">SmartAttendance</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="register.html">Registration</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="profile.html">Student Profile</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <div class="dashboard-header">
+      <h2>Attendance Dashboard</h2>
+      <button class="btn" onclick="loadReport()">Refresh</button>
+    </div>
+
+    <div class="dashboard-controls">
+      <input id="search-name" placeholder="Search student by name">
+      <button class="btn" onclick="searchFromDashboard()">Search</button>
+      <select id="month-select"></select>
+      <button class="btn" onclick="loadSelectedMonth()">View Month</button>
+    </div>
+
+    <!-- Analytics Section -->
+    <section class="analytics-panel card compact" id="analytics-panel" style="margin-top: 1rem;">
+      <div class="analytics-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3>Classroom Intelligence</h3>
+        <div class="badges">
+          <span class="badge safe">Safe >85%</span>
+          <span class="badge risk">Risk <75%< /span>
+              <span class="badge critical">Critical <60%< /span>
+        </div>
+      </div>
+
+      <div class="stats-row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+        <div class="stat-box" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+          <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff;">Live Occupancy</h4>
+          <p id="stat-occupancy" style="margin:5px 0 0 0; font-size: 1.5rem; font-weight: bold;">--</p>
+        </div>
+        <div class="stat-box" style="flex: 1; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+          <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff;">Most Skipped Period</h4>
+          <p id="stat-skipped" style="margin:5px 0 0 0; font-size: 1.5rem; font-weight: bold;">--</p>
+        </div>
+      </div>
+
+      <div class="charts-row" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div class="chart-container" style="flex: 1; min-width: 300px;">
+          <h4>Weekly Attendance Trend</h4>
+          <canvas id="trendChart"></canvas>
+        </div>
+        <div class="heatmap-container" style="flex: 1; min-width: 300px;">
+          <h4>Period vs Day Heatmap</h4>
+          <div id="heatmap-grid" class="heatmap-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chatbot Widget Admin -->
+    <button id="chat-toggle-btn" class="chat-toggle-btn" onclick="toggleChat()">💬</button>
+    <div id="admin-chat-widget" class="chat-widget hidden">
+      <div class="chat-header" onclick="toggleChat()">AI Admin Assistant <span style="float:right">▼</span></div>
+      <div class="chat-body hidden" id="chat-body">
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg ai">Hello Admin. Ask me anything about the attendance data. Example: "Who is absent in period
+            3?"</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Type query..."
+            onkeypress="if(event.key==='Enter') sendAdminChat()">
+          <button class="btn" onclick="sendAdminChat()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="student-profile" class="card compact hidden"></section>
+
+    <div class="table-wrap" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-perspective="2000">
+      <table id="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>P1 (8am)</th>
+            <th>P2 (9am)</th>
+            <th>P3 (10am)</th>
+            <th>P4 (11am)</th>
+            <th>P5 (12pm)</th>
+            <th>P6 (1pm)</th>
+            <th>P7 (2pm)</th>
+            <th>P8 (3pm)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <pre id="output" class="output"></pre>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2026 Smart Attendance</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

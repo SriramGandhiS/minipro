@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Smart Attendance | Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-page="home">
+  <div id="three-bg"></div>
+  <div class="custom-cursor" id="cursor"></div>
+
+  <header class="site-header">
+
+    <div class="logo">SmartAttendance</div>
+    <nav class="nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="register.html">Registration</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html">Student Profile</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Automatic Attendance with Face Capture</h1>
+      <p>Click start once. The camera scans all faces and marks attendance automatically in real time.</p>
+      <div class="cta">
+        <button class="btn primary" onclick="startAttendance()">Start Attendance</button>
+        <button class="btn" onclick="stopAttendance()">Stop Attendance</button>
+        <a class="btn ghost" href="register.html">Register Student</a>
+      </div>
+      <div class="status-row">
+        <span id="scan-state" class="pill">Stopped</span>
+      </div>
+    </div>
+
+    <div class="hero-media">
+      <div class="camera-card" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1200">
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas" class="hidden"></canvas>
+      </div>
+      <pre id="output" class="output"></pre>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature">One-click start/stop for staff</div>
+    <div class="feature">Live recognition for full classroom</div>
+    <div class="feature">Low attendance warning below 75%</div>
+  </section>
+
+  <footer class="site-footer">
+    <span>&copy; 2026 Smart Attendance</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

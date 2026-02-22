@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Smart Attendance | Student Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-page="profile">
+  <div id="three-bg"></div>
+  <div class="custom-cursor" id="cursor"></div>
+
+  <header class="site-header">
+    <div class="logo">SmartAttendance</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="register.html">Registration</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html" class="active">Student Profile</a>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+    <div class="dashboard-header">
+      <h2>Student Profile</h2>
+    </div>
+
+    <div class="dashboard-controls">
+      <input id="profile-search-name" list="class-list-datalist" placeholder="Enter student name">
+      <datalist id="class-list-datalist"></datalist>
+      <button class="btn primary" onclick="searchProfilePage()">Search</button>
+    </div>
+
+    <!-- Chatbot Widget Student -->
+    <button id="chat-toggle-btn" class="chat-toggle-btn hidden" onclick="toggleChat()">💬</button>
+    <div id="student-chat-widget" class="chat-widget hidden">
+      <div class="chat-header" onclick="toggleChat()">AI Student Assistant <span style="float:right">▼</span></div>
+      <div class="chat-body hidden" id="chat-body">
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg ai">Hello Student. Ask me about your attendance or say 'raise attendance complaint'.</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Type query..."
+            onkeypress="if(event.key==='Enter') sendStudentChat()">
+          <button class="btn" onclick="sendStudentChat()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="profile-result" class="card compact hidden"></section>
+
+    <section id="admin-edit" class="card compact hidden">
+      <h3>Admin Edit</h3>
+      <label class="field">Current Name
+        <input type="text" id="edit-current-name" readonly>
+      </label>
+      <label class="field">New Name
+        <input type="text" id="edit-new-name" placeholder="Optional">
+      </label>
+      <label class="field">Details
+        <input type="text" id="edit-details" placeholder="Department / Year / Roll No">
+      </label>
+      <div id="daily-attendance-editor" class="table-wrap hidden"></div>
+      <div class="card-actions left">
+        <button class="btn primary" onclick="saveStudentUpdate()">Save Changes</button>
+      </div>
+    </section>
+
+    <pre id="output" class="output"></pre>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; 2026 Smart Attendance</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
