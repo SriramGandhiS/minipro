@@ -55,7 +55,8 @@
       <div class="auth-card" data-tilt>
         <h2>Educational Access Required</h2>
         <p>To access the main Smart Attendance system, you must verify your identity using a valid
-          <strong>@psnacet.edu.in</strong> Google account.</p>
+          <strong>@psnacet.edu.in</strong> Google account.
+        </p>
 
         <div id="google-login-container" class="g-btn-wrapper">
           <div id="g_id_onload"
@@ -79,7 +80,9 @@
       <div class="logo">SmartAttendance <span class="badge safe">Verified</span></div>
       <nav class="nav">
         <button class="nav-btn active" onclick="switchTab('capture')">Capture</button>
-        <button class="nav-btn" onclick="switchTab('analytics')">Dashboard / Analytics</button>
+        <button class="nav-btn" onclick="switchTab('roster')">Roster (8-Period)</button>
+        <button class="nav-btn" onclick="switchTab('analytics')">Intelligence</button>
+        <button class="nav-btn" onclick="switchTab('profile')">Management</button>
         <button class="nav-btn" onclick="logoutGoogle()">Logout</button>
       </nav>
     </header>
@@ -108,18 +111,113 @@
       </section>
     </div>
 
+    <div class="dashboard-content hidden" id="tab-roster">
+      <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h2>Attendance Roster</h2>
+        <div class="dashboard-controls">
+          <select id="month-select" class="btn ghost"></select>
+          <button class="btn primary" onclick="loadSelectedMonth()">Filter Month</button>
+          <button class="btn ghost" onclick="loadReport()">Refresh</button>
+        </div>
+      </div>
+      <div class="table-wrap" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-perspective="2000">
+        <table id="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date</th>
+              <th>P1 (8am)</th>
+              <th>P2 (9am)</th>
+              <th>P3 (10am)</th>
+              <th>P4 (11am)</th>
+              <th>P5 (12pm)</th>
+              <th>P6 (1pm)</th>
+              <th>P7 (2pm)</th>
+              <th>P8 (3pm)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="dashboard-content hidden" id="tab-analytics">
-      <div style="text-align:center; padding:50px;">
-        <h2><a href="dashboard.html" style="color:var(--accent); text-decoration:none;">Enter Full Analytics Dashboard
-            &rarr;</a></h2>
-        <p style="margin-top:20px; color:var(--muted);">Or <a href="profile.html" style="color:var(--accent);">View
-            Individual Student Profiles</a></p>
+      <section class="analytics-panel card compact">
+        <div class="analytics-header"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h3>Classroom Intelligence</h3>
+          <div class="badges">
+            <span class="badge safe">Safe >85%</span>
+            <span class="badge risk">Risk <75%< /span>
+                <span class="badge critical">Critical <60%< /span>
+          </div>
+        </div>
+        <div class="stats-row" style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="stat-box"
+            style="flex: 1; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(138,241,255,0.1);">
+            <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff; text-transform: uppercase; letter-spacing: 1px;">
+              Live Occupancy</h4>
+            <p id="stat-occupancy" style="margin:10px 0 0 0; font-size: 2rem; font-weight: bold; color: #fff;">--</p>
+          </div>
+          <div class="stat-box"
+            style="flex: 1; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(138,241,255,0.1);">
+            <h4 style="margin:0; font-size: 0.9rem; color: #8af1ff; text-transform: uppercase; letter-spacing: 1px;">
+              Most Skipped Period</h4>
+            <p id="stat-skipped" style="margin:10px 0 0 0; font-size: 2rem; font-weight: bold; color: #fff;">--</p>
+          </div>
+        </div>
+        <div class="charts-row" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <div class="chart-container"
+            style="flex: 1; min-width: 320px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+            <h4 style="margin-bottom:15px;">Weekly Attendance Trend</h4>
+            <canvas id="trendChart"></canvas>
+          </div>
+          <div class="heatmap-container"
+            style="flex: 1; min-width: 320px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+            <h4 style="margin-bottom:15px;">Period vs Day Heatmap</h4>
+            <div id="heatmap-grid" class="heatmap-grid"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="dashboard-content hidden" id="tab-profile">
+      <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h2>System Management</h2>
+      </div>
+      <div class="dashboard-controls" style="margin-bottom: 2rem;">
+        <input id="profile-search-name" list="class-list-datalist" placeholder="Enter student name to manage..."
+          style="width: 300px;">
+        <datalist id="class-list-datalist"></datalist>
+        <button class="btn primary" onclick="searchProfilePage()">Search Profile</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+        <section id="profile-result" class="card compact hidden" style="background: rgba(138,241,255,0.05);"></section>
+
+        <section id="admin-edit" class="card compact hidden" style="background: rgba(255,255,255,0.05);">
+          <h3>Admin Editor</h3>
+          <label class="field">Current Identity
+            <input type="text" id="edit-current-name" readonly style="background: rgba(0,0,0,0.2);">
+          </label>
+          <label class="field">Apply New Name
+            <input type="text" id="edit-new-name" placeholder="Leave blank to skip">
+          </label>
+          <label class="field">Department / Meta Info
+            <input type="text" id="edit-details" placeholder="e.g. CSE-B / 3rd Year">
+          </label>
+          <div id="daily-attendance-editor" class="table-wrap hidden" style="margin: 1rem 0;"></div>
+          <div class="card-actions left">
+            <button class="btn primary" onclick="saveStudentUpdate()">Commit Changes</button>
+          </div>
+        </section>
       </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 
   <script>

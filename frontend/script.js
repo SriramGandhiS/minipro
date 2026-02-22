@@ -1,6 +1,6 @@
 // Detect API base URL dynamically
-let API_BASE = window.location.pathname.includes('static') 
-  ? window.location.origin 
+let API_BASE = window.location.pathname.includes('static')
+  ? window.location.origin
   : (window.location.protocol + "//" + window.location.host);
 
 // For Render: automatically use the current domain
@@ -592,44 +592,12 @@ function init3DBackground() {
 function initPage() {
   init3DBackground();
   if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
-
-  const page = document.body.dataset.page;
-  if (page === "home") {
-    // Only start camera when Google Login succeeds and opens dashboard
-  } else if (page === "dashboard") {
-    loadMonths().then(() => loadReport(getSelectedMonth()));
-    dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
-    setTimeout(fetchAnalytics, 500); // Load analytics shortly after
-  } else if (page === "profile") {
-    const listConfig = document.getElementById("class-list-datalist");
-    if (listConfig && typeof CLASS_LIST !== 'undefined') {
-      listConfig.innerHTML = CLASS_LIST.map(n => `<option value="${n}">`).join("");
-    }
-  } else {
-    // For other pages like Registration mostly
-    startCamera(); 
-  }
 }
 
 let jwtToken = sessionStorage.getItem("jwtToken");
 
 async function fetchAnalytics() {
-  if (!jwtToken || sessionStorage.getItem("role") !== "admin") {
-    // Auto-login to remove prompt at user request
-    const res = await fetch(`${API_BASE}/api/login`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: "admin", password: "admin" })
-    });
-    const data = await res.json();
-    if (data.status === "success") {
-      jwtToken = data.token;
-      sessionStorage.setItem("jwtToken", jwtToken);
-      sessionStorage.setItem("role", "admin");
-    } else {
-      console.error("Auto-login failed. Password might not be 'admin'.");
-      return;
-    }
-  }
+  if (!jwtToken) return;
 
   try {
     const intRes = await fetch(`${API_BASE}/api/analytics/intelligence`, { headers: { "Authorization": "Bearer " + jwtToken } });
@@ -767,26 +735,29 @@ async function handleGoogleLogin(response) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ credential: response.credential })
     });
-    
+
     const data = await res.json();
     if (!res.ok) {
       document.getElementById("auth-error").textContent = data.message;
       document.getElementById("auth-error").classList.remove("hidden");
       return;
     }
-    
+
     // Unlock Dashboard
     jwtToken = data.token;
     sessionStorage.setItem("jwtToken", jwtToken);
     sessionStorage.setItem("role", data.role);
-    
+
     document.getElementById("parallax-container").classList.add("hidden");
     const dash = document.getElementById("app-dashboard");
     if (dash) dash.classList.remove("hidden");
-    
+
     document.getElementById("three-bg").style.display = 'none'; // Save resources
-    
-    startCamera(); // Start camera now that they are authorized
+
+    // Initialize Dashboard Components
+    loadMonths().then(() => loadReport(getSelectedMonth()));
+    setTimeout(fetchAnalytics, 1000);
+    startCamera();
   } catch (err) {
     document.getElementById("auth-error").textContent = "Connection error. Ensure backend is running.";
     document.getElementById("auth-error").classList.remove("hidden");
@@ -799,7 +770,7 @@ function logoutGoogle() {
   jwtToken = null;
   document.getElementById("app-dashboard").classList.add("hidden");
   document.getElementById("parallax-container").classList.remove("hidden");
-  document.getElementById("three-bg").style.display = 'block'; 
+  document.getElementById("three-bg").style.display = 'block';
   stopAttendance();
 }
 
