@@ -554,29 +554,56 @@ function init3DBackground() {
   container.appendChild(renderer.domElement);
 
   const geometry = new THREE.BufferGeometry();
-  const particleCount = window.innerWidth > 900 ? 2200 : 900;
+  const particleCount = window.innerWidth > 900 ? 5000 : 1500; // Increased density
   const vertices = [];
+  const velocities = [];
+
   for (let i = 0; i < particleCount; i++) {
-    vertices.push((Math.random() - 0.5) * 2200);
-    vertices.push((Math.random() - 0.5) * 2200);
-    vertices.push((Math.random() - 0.5) * 2200);
+    vertices.push((Math.random() - 0.5) * 2500);
+    vertices.push((Math.random() - 0.5) * 2500);
+    vertices.push((Math.random() - 0.5) * 2500);
+    velocities.push((Math.random() - 0.5) * 0.2); // Slow drift
   }
+
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
-  const material = new THREE.PointsMaterial({ color: 0x8af1ff, size: 2.2, opacity: 0.22, transparent: true });
+  const material = new THREE.PointsMaterial({
+    color: 0xffffff, // Pure white dots as requested
+    size: 3.5, // Slightly larger "fancy" dots
+    opacity: 0.6,
+    transparent: true,
+    sizeAttenuation: true
+  });
+
   const particles = new THREE.Points(geometry, material);
   scene.add(particles);
 
+  const cursor = document.getElementById("cursor");
   document.addEventListener("mousemove", e => {
     mouseX = (e.clientX / window.innerWidth) * 2 - 1;
     mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    // Fancy Dot Cursor Follow
+    if (cursor) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+
+      const target = e.target;
+      const isInteractive = target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('.btn');
+      cursor.classList.toggle('hovering', !!isInteractive);
+    }
   });
 
   function animate() {
     requestAnimationFrame(animate);
-    particles.rotation.y += 0.0006;
-    particles.rotation.x += 0.0002;
-    camera.position.x += (mouseX * 260 - camera.position.x) * 0.05;
-    camera.position.y += (mouseY * 260 - camera.position.y) * 0.05;
+
+    // Smooth flowing rotation
+    particles.rotation.y += 0.0012;
+    particles.rotation.x += 0.0004;
+
+    // Interactive drift based on mouse
+    camera.position.x += (mouseX * 400 - camera.position.x) * 0.02;
+    camera.position.y += (mouseY * 400 - camera.position.y) * 0.02;
+
     camera.lookAt(scene.position);
     renderer.render(scene, camera);
   }
