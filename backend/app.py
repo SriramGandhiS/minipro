@@ -80,7 +80,12 @@ os.makedirs(DATA_PATH, exist_ok=True)
 attendance_active = False
 
 # Fallback basic face detection using Haar Cascades
+print(f"DEBUG: Loading cascade from {cv2.data.haarcascades}")
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+if face_cascade.empty():
+    print("DEBUG: Cascade loaded empty! Check cv2.data.haarcascades path.")
+else:
+    print("DEBUG: Cascade loaded successfully.")
 
 # ----------------- DB -----------------
 def init_db():
@@ -131,12 +136,17 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '1234')
 # ----------------- Load Encodings -----------------
 known_encodings = {}
 
+print(f"DEBUG: Checking for encoding file at {ENCODING_FILE}")
 if os.path.exists(ENCODING_FILE):
     try:
         with open(ENCODING_FILE, "rb") as f:
             known_encodings = pickle.load(f)
-    except:
+        print(f"DEBUG: Loaded {len(known_encodings)} encodings")
+    except Exception as e:
+        print(f"DEBUG: Failed to load encodings: {e}")
         known_encodings = {}
+else:
+    print("DEBUG: No encoding file found, starting fresh")
 
 def save_encodings():
     with open(ENCODING_FILE, "wb") as f:
