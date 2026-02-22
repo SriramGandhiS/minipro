@@ -853,18 +853,17 @@
 
   <!-- ─── NAVBAR ─── -->
   <header class="navbar" id="navbar">
-    <span class="nav-logo">SmartAttendance</span>
+    <span class="nav-logo">SmartAttendance · PSNACET</span>
     <nav>
       <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="register.html">Registration</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="attendance.html">Attendance</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><a href="#" onclick="logout();return false;">Logout</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#features">System</a></li>
+        <li><a href="#achievements">Achievements</a></li>
+        <li><a href="#placements">Placements</a></li>
+        <li><a href="#auth">Login</a></li>
       </ul>
     </nav>
-    <a href="#auth" class="nav-btn">Access System</a>
+    <a href="#auth" class="nav-btn">Login</a>
   </header>
 
   <!-- ─── HERO ─── -->
@@ -929,7 +928,7 @@
   </div>
 
   <!-- ─── ABOUT SPLIT (light) ─── -->
-  <div class="split-section reveal">
+  <div class="split-section reveal" id="about">
     <div class="split-img"></div>
     <div class="split-content">
       <p class="section-label">About the Institution</p>
@@ -944,7 +943,7 @@
   </div>
 
   <!-- ─── ABOUT SPLIT (dark, reversed) ─── -->
-  <div class="split-section reveal" style="direction: rtl;">
+  <div class="split-section reveal" id="achievements" style="direction: rtl;">
     <div class="split-img"
       style="background-image: url('https://www.psnacet.edu.in/wp-content/uploads/2024/05/MG_0043_11zon.webp'); direction: ltr;">
     </div>
@@ -960,7 +959,7 @@
   </div>
 
   <!-- ─── SYSTEM FEATURES ─── -->
-  <div class="features-strip reveal">
+  <div class="features-strip reveal" id="features">
     <p class="section-label">The System</p>
     <h2 class="section-h2" style="font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -0.03em; line-height: 1.1;">
       What Smart Attendance Does</h2>
