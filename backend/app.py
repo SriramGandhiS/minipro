@@ -296,9 +296,10 @@ def api_login():
             if exists or attendance_exists or name in known_encodings or name:
                 token = jwt.encode({'user': name, 'role': 'student'}, app.config['SECRET_KEY'], algorithm="HS256")
                 return jsonify({'status': 'success', 'token': token, 'role': 'student'})
-        return jsonify({'status': 'error', 'message': 'Student not found in registry'}), 404
         
-    return jsonify({'status': 'error', 'message': 'Invalid role'}), 400
+        return jsonify({'status': 'error', 'message': 'Student not found in registry'}), 404
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @app.route("/report", methods=["GET"])
 def report():
