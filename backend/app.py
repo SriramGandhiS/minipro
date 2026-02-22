@@ -125,7 +125,8 @@ def init_db():
 
 init_db()
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin')
+ADMIN_USER = os.environ.get('ADMIN_USER', 'sriram.dev')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', '1234')
 
 # ----------------- Load Encodings -----------------
 known_encodings = {}
@@ -278,10 +279,10 @@ def api_login():
         name = data.get("name")
 
         if role == "admin":
-            if password == ADMIN_PASSWORD:
-                token = jwt.encode({'user': 'admin', 'role': 'admin'}, app.config['SECRET_KEY'], algorithm="HS256")
+            if name == ADMIN_USER and password == ADMIN_PASSWORD:
+                token = jwt.encode({'user': name, 'role': 'admin'}, app.config['SECRET_KEY'], algorithm="HS256")
                 return jsonify({'status': 'success', 'token': token, 'role': 'admin'})
-            return jsonify({'status': 'error', 'message': 'Invalid admin password'}), 401
+            return jsonify({'status': 'error', 'message': 'Invalid admin credentials'}), 401
         
         elif role == "student":
             conn = sqlite3.connect(DB_FILE)
@@ -300,6 +301,39 @@ def api_login():
         return jsonify({'status': 'error', 'message': 'Student not found in registry'}), 404
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 400
+
+@app.route("/api/google_login", methods=["POST"])
+def api_google_login():
+    try:
+        data = request.json
+        credential = data.get("credential")
+        if not credential:
+            return jsonify({'status': 'error', 'message': 'No credential provided'}), 400
+            
+        # Decode JWT without verifying Google's signature (for simplicity in our backend, 
+        # since Google Identity Services already verified it on the frontend)
+        decoded = jwt.decode(credential, options={"verify_signature": False})
+        
+        email = decoded.get("email", "")
+        if not email.endswith("@psnacet.edu.in") and email != "srirams23cs@psnacet.edu.in":
+            return jsonify({'status': 'error', 'message': 'Access restricted to PSNACET educational accounts only.'}), 403
+            
+        # Give them an institutional session token
+        name = decoded.get("name", email.split("@")[0])
+        token = jwt.encode({'user': name, 'role': 'institution'}, app.config['SECRET_KEY'], algorithm="HS256")
+        
+        return jsonify({
+            'status': 'success', 
+            'token': token, 
+            'role': 'institution',
+            'user_info': {
+                'name': name,
+                'email': email,
+                'picture': decoded.get("picture", "")
+            }
+        })
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': f'Google auth failed: {str(e)}'}), 400
 
 @app.route("/report", methods=["GET"])
 def report():

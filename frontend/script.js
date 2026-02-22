@@ -590,12 +590,13 @@ function init3DBackground() {
 }
 
 function initPage() {
-  startCamera();
   init3DBackground();
   if (window.VanillaTilt) VanillaTilt.init(document.querySelectorAll("[data-tilt]"));
 
   const page = document.body.dataset.page;
-  if (page === "dashboard") {
+  if (page === "home") {
+    // Only start camera when Google Login succeeds and opens dashboard
+  } else if (page === "dashboard") {
     loadMonths().then(() => loadReport(getSelectedMonth()));
     dashboardInterval = setInterval(() => loadReport(getSelectedMonth()), 5000);
     setTimeout(fetchAnalytics, 500); // Load analytics shortly after
@@ -604,6 +605,9 @@ function initPage() {
     if (listConfig && typeof CLASS_LIST !== 'undefined') {
       listConfig.innerHTML = CLASS_LIST.map(n => `<option value="${n}">`).join("");
     }
+  } else {
+    // For other pages like Registration mostly
+    startCamera(); 
   }
 }
 
@@ -755,6 +759,64 @@ async function sendChat(endpoint) {
 window.sendAdminChat = () => sendChat("admin");
 window.sendStudentChat = () => sendChat("student");
 
+// --- Google Auth Methods ---
+async function handleGoogleLogin(response) {
+  try {
+    const res = await fetch(`${API_BASE}/api/google_login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential: response.credential })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      document.getElementById("auth-error").textContent = data.message;
+      document.getElementById("auth-error").classList.remove("hidden");
+      return;
+    }
+    
+    // Unlock Dashboard
+    jwtToken = data.token;
+    sessionStorage.setItem("jwtToken", jwtToken);
+    sessionStorage.setItem("role", data.role);
+    
+    document.getElementById("parallax-container").classList.add("hidden");
+    const dash = document.getElementById("app-dashboard");
+    if (dash) dash.classList.remove("hidden");
+    
+    document.getElementById("three-bg").style.display = 'none'; // Save resources
+    
+    startCamera(); // Start camera now that they are authorized
+  } catch (err) {
+    document.getElementById("auth-error").textContent = "Connection error. Ensure backend is running.";
+    document.getElementById("auth-error").classList.remove("hidden");
+  }
+}
+
+function logoutGoogle() {
+  sessionStorage.removeItem("jwtToken");
+  sessionStorage.removeItem("role");
+  jwtToken = null;
+  document.getElementById("app-dashboard").classList.add("hidden");
+  document.getElementById("parallax-container").classList.remove("hidden");
+  document.getElementById("three-bg").style.display = 'block'; 
+  stopAttendance();
+}
+
+function openAdminRegister() {
+  const entered = prompt("Enter Admin ID: (e.g. sriram.dev)");
+  if (!entered) return;
+  const pwd = prompt("Enter Admin Password:");
+  if (entered === "sriram.dev" && pwd === "1234") {
+    window.location.href = "register.html";
+  } else {
+    alert("Invalid Admin Credentials");
+  }
+}
+
+window.handleGoogleLogin = handleGoogleLogin;
+window.logoutGoogle = logoutGoogle;
+window.openAdminRegister = openAdminRegister;
 window.startAttendance = startAttendance;
 window.stopAttendance = stopAttendance;
 window.registerStudent = registerStudent;

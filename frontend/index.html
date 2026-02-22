@@ -4,62 +4,143 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Smart Attendance | Home</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>Smart Attendance | PSNACET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body data-page="home">
+  <!-- 3D Background Canvas -->
   <div id="three-bg"></div>
-  <div class="custom-cursor" id="cursor"></div>
 
-  <header class="site-header">
+  <!-- Parallax Scroll Container -->
+  <main class="parallax-container" id="parallax-container">
 
-    <div class="logo">SmartAttendance</div>
-    <nav class="nav">
-      <a href="index.html" class="active">Home</a>
-      <a href="register.html">Registration</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html">Student Profile</a>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <div class="hero-inner">
-      <h1>Automatic Attendance with Face Capture</h1>
-      <p>Click start once. The camera scans all faces and marks attendance automatically in real time.</p>
-      <div class="cta">
-        <button class="btn primary" onclick="startAttendance()">Start Attendance</button>
-        <button class="btn" onclick="stopAttendance()">Stop Attendance</button>
-        <a class="btn ghost" href="register.html">Register Student</a>
+    <!-- Section 1: 3D Hero -->
+    <section class="parallax-section hero-section">
+      <div class="hero-content" data-tilt data-tilt-max="5" data-tilt-speed="400">
+        <h1 class="glitch" data-text="PSNACET">PSNACET</h1>
+        <h2 class="subtitle">Next-Gen Smart Attendance</h2>
+        <p>Scroll down to explore achievements and unlock the dashboard.</p>
+        <div class="scroll-indicator">↓</div>
       </div>
-      <div class="status-row">
-        <span id="scan-state" class="pill">Stopped</span>
+    </section>
+
+    <!-- Section 2: PSNA Achievements Collage (Parallax) -->
+    <section class="parallax-section achievements-section">
+      <h2 class="section-title">A Legacy of Excellence</h2>
+      <div class="collage-grid">
+        <div class="collage-item parallax-layer" style="--parallax-speed: -0.2;">
+          <img src="https://source.unsplash.com/random/400x500/?university,modern" alt="PSNA Building" />
+          <div class="collage-caption">State of the Art Infrastructure</div>
+        </div>
+        <div class="collage-item parallax-layer" style="--parallax-speed: 0.3;">
+          <img src="https://source.unsplash.com/random/500x400/?students,technology" alt="Students" />
+          <div class="collage-caption">Top Campus Placements</div>
+        </div>
+        <div class="collage-item parallax-layer" style="--parallax-speed: -0.1;">
+          <img src="https://source.unsplash.com/random/450x450/?graduation,award" alt="Awards" />
+          <div class="collage-caption">Global Academic Recognition</div>
+        </div>
+        <div class="collage-item parallax-layer" style="--parallax-speed: 0.4;">
+          <img src="https://source.unsplash.com/random/600x300/?innovation,code" alt="Innovation" />
+          <div class="collage-caption">Pioneering AI Research</div>
+        </div>
       </div>
+    </section>
+
+    <!-- Section 3: Google Auth Gate -->
+    <section class="parallax-section auth-section">
+      <div class="auth-card" data-tilt>
+        <h2>Educational Access Required</h2>
+        <p>To access the main Smart Attendance system, you must verify your identity using a valid
+          <strong>@psnacet.edu.in</strong> Google account.</p>
+
+        <div id="google-login-container" class="g-btn-wrapper">
+          <div id="g_id_onload"
+            data-client_id="306791224176-emtle6k75ce3uk0m5o08ia0hcdihlovl.apps.googleusercontent.com"
+            data-context="signin" data-ux_mode="popup" data-callback="handleGoogleLogin" data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with"
+            data-size="large" data-logo_alignment="left">
+          </div>
+        </div>
+
+        <p id="auth-error" class="hidden error-text">Access Denied: Please use an @psnacet.edu.in email.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Dashboard Overlay (Hidden until Auth) -->
+  <div id="app-dashboard" class="hidden full-overlay">
+    <header class="site-header">
+      <div class="logo">SmartAttendance <span class="badge safe">Verified</span></div>
+      <nav class="nav">
+        <button class="nav-btn active" onclick="switchTab('capture')">Capture</button>
+        <button class="nav-btn" onclick="switchTab('analytics')">Dashboard / Analytics</button>
+        <button class="nav-btn" onclick="logoutGoogle()">Logout</button>
+      </nav>
+    </header>
+
+    <div class="dashboard-content" id="tab-capture">
+      <section class="hero compact-hero">
+        <div class="hero-inner">
+          <h1 style="font-size:2.5rem;">Live Attendance Feed</h1>
+          <p>Camera scans all faces and marks attendance dynamically.</p>
+          <div class="cta">
+            <button class="btn primary" onclick="startAttendance()">Start Camera</button>
+            <button class="btn" onclick="stopAttendance()">Stop Camera</button>
+            <button class="btn ghost" onclick="openAdminRegister()">Register Student (Admin)</button>
+          </div>
+          <div class="status-row">
+            <span id="scan-state" class="pill">Stopped</span>
+          </div>
+        </div>
+        <div class="hero-media">
+          <div class="camera-card">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="canvas" class="hidden"></canvas>
+          </div>
+          <pre id="output" class="output"></pre>
+        </div>
+      </section>
     </div>
 
-    <div class="hero-media">
-      <div class="camera-card" data-tilt data-tilt-max="8" data-tilt-speed="400" data-tilt-perspective="1200">
-        <video id="video" autoplay muted playsinline></video>
-        <canvas id="canvas" class="hidden"></canvas>
+    <div class="dashboard-content hidden" id="tab-analytics">
+      <div style="text-align:center; padding:50px;">
+        <h2><a href="dashboard.html" style="color:var(--accent); text-decoration:none;">Enter Full Analytics Dashboard
+            &rarr;</a></h2>
+        <p style="margin-top:20px; color:var(--muted);">Or <a href="profile.html" style="color:var(--accent);">View
+            Individual Student Profiles</a></p>
       </div>
-      <pre id="output" class="output"></pre>
     </div>
-  </section>
-
-  <section class="features">
-    <div class="feature">One-click start/stop for staff</div>
-    <div class="feature">Live recognition for full classroom</div>
-    <div class="feature">Low attendance warning below 75%</div>
-  </section>
-
-  <footer class="site-footer">
-    <span>&copy; 2026 Smart Attendance</span>
-  </footer>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
   <script src="script.js"></script>
+
+  <script>
+    // Handle Parallax Scrolling Effect
+    const container = document.getElementById('parallax-container');
+    container.addEventListener('scroll', () => {
+      const scrolled = container.scrollTop;
+      document.querySelectorAll('.parallax-layer').forEach(layer => {
+        const speed = parseFloat(layer.getAttribute('style').split('speed:')[1]) || 0.1;
+        const yPos = -(scrolled * speed);
+        layer.style.transform = `translateY(${yPos}px)`;
+      });
+    });
+
+    function switchTab(tab) {
+      document.querySelectorAll('.dashboard-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      event.target.classList.add('active');
+    }
+  </script>
 </body>
 
 </html>
